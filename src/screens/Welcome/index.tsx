@@ -23,8 +23,19 @@ export function Welcome() {
       </View>
 
       <View style={styles.btnContainer}>
-        <Button title="Criar Conta" onPress={() => {}} />
-        <Button title="Já possuo cadastro" variant="secondary" />
+        <Button
+          title="Criar Conta"
+          onPress={() => {
+            navigation.navigate('sign-up')
+          }}
+        />
+        <Button
+          title="Já possuo cadastro"
+          variant="secondary"
+          onPress={() => {
+            navigation.navigate('sign-in')
+          }}
+        />
       </View>
     </SafeAreaView>
   )

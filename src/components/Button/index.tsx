@@ -1,15 +1,22 @@
-import { TouchableOpacity, TouchableOpacityProps, Text } from 'react-native'
+import {
+  TouchableOpacity,
+  TouchableOpacityProps,
+  Text,
+  ActivityIndicator,
+} from 'react-native'
 
 import { createStyles } from './styles'
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string
   variant?: 'primary' | 'secondary'
+  isLoading?: boolean
 }
 
 export function Button({
   title,
   variant = 'primary',
+  isLoading = false,
   style: customStyle,
   ...rest
 }: ButtonProps) {
@@ -17,7 +24,11 @@ export function Button({
 
   return (
     <TouchableOpacity style={[styles.container, customStyle]} {...rest}>
-      <Text style={styles.title}>{title}</Text>
+      {isLoading ? (
+        <ActivityIndicator size={24} />
+      ) : (
+        <Text style={styles.title}>{title}</Text>
+      )}
     </TouchableOpacity>
   )
 }

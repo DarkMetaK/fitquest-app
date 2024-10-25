@@ -19,6 +19,7 @@ export default {
     GREEN_6: '#037C54',
     GREEN_8: '#5C861D',
 
+    RED_3: '#E2504C',
     YELLOW_6: '#FFD542',
     ORANGE_6: '#FF882F',
     BLUE_6: '#38B9F6',
@@ -40,4 +41,4 @@ export default {
     '3XL': 32,
     '4XL': 64,
   },
-}
+} as const
