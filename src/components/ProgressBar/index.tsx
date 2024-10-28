@@ -1,3 +1,4 @@
+import Ionicon from '@expo/vector-icons/Ionicons'
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useEffect } from 'react'
 import { TouchableOpacity, View } from 'react-native'
@@ -14,12 +15,14 @@ import { styles } from './styles'
 interface ProgressBarProps {
   totalSteps: number
   currentStep: number
+  icon?: keyof typeof Ionicon.glyphMap
   onBackPress?: () => void
 }
 
 export function ProgressBar({
   totalSteps,
   currentStep,
+  icon,
   onBackPress,
 }: ProgressBarProps) {
   const percentage = Math.round((currentStep / totalSteps) * 100)
@@ -50,7 +53,13 @@ export function ProgressBar({
         <Animated.View
           style={[styles.progress, progressBarStyle]}
           testID="progressTrack"
-        />
+        >
+          {icon && (
+            <View style={styles.trackIcon}>
+              <Ionicon name={icon} color={themes.COLORS.GREEN_6} size={16} />
+            </View>
+          )}
+        </Animated.View>
       </View>
     </View>
   )
