@@ -1,17 +1,22 @@
-import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import Material from '@expo/vector-icons/MaterialIcons'
-import { useNavigation } from '@react-navigation/native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { z } from 'zod'
-import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigation } from '@react-navigation/native'
+import { useMutation } from '@tanstack/react-query'
+import { Controller, useForm } from 'react-hook-form'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { z } from 'zod'
 
-import themes from '@/themes'
-
-import { styles } from './styles'
+import { createCustomer } from '@/api/create-customer'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
+import { useAuth } from '@/hooks/useAuth'
+import themes from '@/themes'
+import { AppError } from '@/utils/AppError'
+
+import { styles } from './styles'
 
 const signUpSchema = z
   .object({
@@ -22,9 +27,6 @@ const signUpSchema = z
     email: z
       .string({ message: 'E-mail é obrigatório.' })
       .email({ message: 'E-mail inválido.' }),
-    phone: z
-      .string({ message: 'Telefone é obrigatório.' })
-      .regex(/^\(\d{2}\) \d{5}-\d{4}$/, { message: 'Telefone inválido.' }),
     password: z
       .string({ message: 'Senha é obrigatória.' })
       .min(6, { message: 'Senha deve ter no mínimo 6 caracteres.' }),
@@ -45,29 +47,60 @@ const signUpSchema = z
 type SignUpForm = z.infer<typeof signUpSchema>
 
 export function SignUp() {
+  const { handleSignIn } = useAuth()
   const navigation = useNavigation()
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    getValues,
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
     reValidateMode: 'onChange',
     defaultValues: {
       name: '',
       email: '',
-      phone: '',
       password: '',
       confirmPassword: '',
     },
   })
 
-  const shouldDisableButton = isSubmitting
+  const { mutateAsync } = useMutation({
+    mutationFn: createCustomer,
+    onSuccess: async () => {
+      try {
+        await handleSignIn(getValues('email'), getValues('password'), () => {
+          navigation.navigate('metadata')
+        })
+      } catch (error) {
+        console.log(error)
+        navigation.navigate('sign-in')
+      }
+    },
+    onError: (error) => {
+      const isAppError = error instanceof AppError
 
-  async function handleSignUp(data: SignUpForm) {
-    console.log(data)
+      const title = isAppError
+        ? error.message
+        : 'Erro no servidor, tente novamente mais tarde.'
+
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Erro',
+        textBody: title,
+        button: 'Fechar',
+      })
+
+      console.log(error)
+    },
+  })
+
+  async function handleSignUp({ name, email, password }: SignUpForm) {
+    await mutateAsync({ name, email, password })
   }
+
+  const shouldDisableButton = isSubmitting
 
   return (
     <SafeAreaView style={styles.container}>
@@ -120,22 +153,6 @@ export function SignUp() {
                 />
               )}
               name="email"
-            />
-
-            <Controller
-              control={control}
-              render={({ field }) => (
-                <Input
-                  placeholder="Telefone"
-                  iconName="phone"
-                  error={errors.phone?.message}
-                  prefix="+55"
-                  mask="phone"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                />
-              )}
-              name="phone"
             />
 
             <Controller

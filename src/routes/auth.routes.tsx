@@ -3,14 +3,17 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack'
 
-import { Welcome } from '@/screens/Welcome'
-import { SignUp } from '@/screens/SignUp'
+import { Metadata } from '@/screens/Metadata'
 import { SignIn } from '@/screens/SignIn'
+import { SignUp } from '@/screens/SignUp'
+import { Welcome } from '@/screens/Welcome'
 
 type AuthRoutes = {
   welcome: undefined
   'sign-up': undefined
   'sign-in': undefined
+  'phone-validation': undefined
+  metadata: undefined
 }
 
 export type AuthNavigatorRoutesProps = NativeStackNavigationProp<AuthRoutes>
@@ -23,7 +26,7 @@ export function AuthRoutes() {
       <Screen name="welcome" component={Welcome} />
       <Screen name="sign-up" component={SignUp} />
       <Screen name="sign-in" component={SignIn} />
-      {/* <Screen name="metadata" component={PreRegistration} /> */}
+      <Screen name="metadata" component={Metadata} />
     </Navigator>
   )
 }

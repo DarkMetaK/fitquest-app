@@ -1,9 +1,10 @@
-import { View, TextInput, Text, TextInputProps } from 'react-native'
 import Material from '@expo/vector-icons/MaterialIcons'
+import { Text, TextInput, TextInputProps, View } from 'react-native'
 import { TextInputMask } from 'react-native-masked-text'
 
-import { styles } from './styles'
 import themes from '@/themes'
+
+import { styles } from './styles'
 
 interface InputProps extends TextInputProps {
   iconName?: keyof typeof Material.glyphMap
@@ -37,7 +38,7 @@ export function Input({
             options={{
               maskType: 'BRL',
               withDDD: true,
-              dddMask: '(99) ',
+              dddMask: '99 ',
             }}
             style={[styles.input, customStyle]}
             placeholderTextColor={themes.COLORS.GRAY_8}

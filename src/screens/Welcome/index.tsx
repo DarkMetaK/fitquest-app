@@ -1,15 +1,24 @@
-import { View, Image, Text } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
+import { useEffect } from 'react'
+import { Image, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import decorationImage from '@/assets/welcome-img.png'
 import logoImage from '@/assets/logo.png'
+import decorationImage from '@/assets/welcome-img.png'
+import { Button } from '@/components/Button'
+import { useAuth } from '@/hooks/useAuth'
 
 import { styles } from './styles'
-import { Button } from '@/components/Button'
 
 export function Welcome() {
+  const { user, token } = useAuth()
   const navigation = useNavigation()
+
+  useEffect(() => {
+    if (token) {
+      setTimeout(() => navigation.navigate('metadata'), 100)
+    }
+  }, [navigation, token, user])
 
   return (
     <SafeAreaView style={styles.container}>
