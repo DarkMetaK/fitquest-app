@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button } from '@/components/Button'
 import { ExerciseItem } from '@/components/ExerciseItem'
 import { Crystal } from '@/components/Icon'
+import { useWorkout } from '@/hooks/useWorkout'
 import themes from '@/themes'
 
 import { styles } from './styles'
@@ -19,6 +20,7 @@ import { styles } from './styles'
 export function Workout() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation()
+  const { startWorkout } = useWorkout()
 
   return (
     <View style={styles.container}>
@@ -128,7 +130,10 @@ export function Workout() {
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
         <Button
           title="Iniciar treino"
-          onPress={() => navigation.navigate('exercise', { id: 'any' })}
+          onPress={() => {
+            startWorkout('sdfs')
+            navigation.navigate('exercise', { id: 'sdfs' })
+          }}
         />
       </View>
     </View>

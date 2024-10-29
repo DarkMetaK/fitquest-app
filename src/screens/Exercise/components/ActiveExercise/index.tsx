@@ -1,20 +1,77 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useEffect, useRef, useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { useWorkout } from '@/hooks/useWorkout'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
-export function ActiveExercise() {
+interface ActiveExerciseProps {
+  name: string
+  duration: number
+  demonstrationUrl: string
+  audioUrl?: string
+  videoUrl?: string
+}
+
+export function ActiveExercise({
+  name,
+  duration,
+  demonstrationUrl,
+}: ActiveExerciseProps) {
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [remainingTime, setRemainingTime] = useState(duration)
+  const timer = useRef<NodeJS.Timeout>()
+
+  const { completeExercise } = useWorkout()
   const insets = useSafeAreaInsets()
+
+  useEffect(() => {
+    timer.current = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev === 0) {
+          clearInterval(timer.current)
+          completeExercise()
+          return 0
+        }
+
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => {
+      clearInterval(timer.current)
+    }
+  }, [completeExercise])
+
+  function handlePlayPause() {
+    const currentlyPlaying = isPlaying
+    setIsPlaying(!currentlyPlaying)
+
+    if (currentlyPlaying) {
+      clearInterval(timer.current)
+    } else {
+      timer.current = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev === 0) {
+            clearInterval(timer.current)
+            return 0
+          }
+
+          return prev - 1
+        })
+      }, 1000)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/150' }}
+            source={{ uri: demonstrationUrl }}
             style={styles.demonstration}
             alt=""
           />
@@ -35,8 +92,8 @@ export function ActiveExercise() {
         </View>
 
         <View style={styles.main}>
-          <Text style={styles.timer}>00:45</Text>
-          <Text style={styles.title}>Postura do gato e da vaca sentada</Text>
+          <Text style={styles.timer}>{remainingTime}</Text>
+          <Text style={styles.title}>{name}</Text>
         </View>
       </View>
 
@@ -50,7 +107,10 @@ export function ActiveExercise() {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.controlButton}>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={handlePlayPause}
+          >
             <Material name="pause" size={32} color={themes.COLORS.WHITE} />
           </TouchableOpacity>
 

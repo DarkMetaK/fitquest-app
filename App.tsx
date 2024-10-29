@@ -14,6 +14,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { Loading } from '@/components/Loading'
 import { AuthContextProvider } from '@/contexts/AuthContext'
+import { WorkoutContextProvider } from '@/contexts/WorkoutContext'
 import { queryClient } from '@/libs/react-query'
 import { Routes } from '@/routes'
 
@@ -31,11 +32,13 @@ export default function App() {
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
       <AuthContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <AlertNotificationRoot>
-            {fontsLoaded ? <Routes /> : <Loading />}
-          </AlertNotificationRoot>
-        </QueryClientProvider>
+        <WorkoutContextProvider>
+          <QueryClientProvider client={queryClient}>
+            <AlertNotificationRoot>
+              {fontsLoaded ? <Routes /> : <Loading />}
+            </AlertNotificationRoot>
+          </QueryClientProvider>
+        </WorkoutContextProvider>
       </AuthContextProvider>
     </SafeAreaProvider>
   )
