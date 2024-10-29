@@ -1,4 +1,5 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useNavigation } from '@react-navigation/native'
 import { ImageBackground, Pressable, Text, View } from 'react-native'
 
 import themes from '@/themes'
@@ -12,14 +13,20 @@ interface BundleProps {
   bannerUrl: string
 }
 
-export function Bundle({ bannerUrl, title, levelsAmount }: BundleProps) {
+export function BundleItem({ bannerUrl, title, levelsAmount }: BundleProps) {
+  const navigation = useNavigation()
+
+  function handleBundleDetails() {
+    navigation.navigate('bundle', { id: '1' })
+  }
+
   return (
     <ImageBackground
       source={{ uri: bannerUrl }}
       style={styles.container}
       resizeMode="cover"
     >
-      <Pressable style={styles.content}>
+      <Pressable style={styles.content} onPress={handleBundleDetails}>
         <View style={styles.contentHeader}>
           <Text style={styles.title} numberOfLines={1}>
             {title}

@@ -8,7 +8,7 @@ import { SignIn } from '@/screens/SignIn'
 import { SignUp } from '@/screens/SignUp'
 import { Welcome } from '@/screens/Welcome'
 
-type AuthRoutes = {
+export type AuthRoutes = {
   welcome: undefined
   'sign-up': undefined
   'sign-in': undefined

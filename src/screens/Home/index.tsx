@@ -1,7 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
-import { Bundle } from '@/components/Bundle'
+import { BundleItem } from '@/components/BundleItem'
 import { Challenge } from '@/components/Challenge'
 import { Header } from '@/components/Header'
 import { Walking } from '@/components/Walking'
@@ -32,7 +32,7 @@ export function Home() {
             </TouchableOpacity>
           </View>
 
-          <Bundle
+          <BundleItem
             bannerUrl="https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg"
             levelsAmount={30}
             title="Iniciante"

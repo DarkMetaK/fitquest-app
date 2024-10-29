@@ -5,14 +5,18 @@ import {
 } from '@react-navigation/bottom-tabs'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { Bundle } from '@/screens/Bundle'
 import { Home } from '@/screens/Home'
 import themes from '@/themes'
 
-type AppRoutes = {
+export type AppRoutes = {
   home: undefined
   exchange: undefined
   metrics: undefined
   profile: undefined
+  bundle: {
+    id: string
+  }
 }
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>
@@ -83,6 +87,17 @@ export function AppRoutes() {
             <Material name="person" size={24} color={color} />
           ),
           tabBarLabel: 'Perfil',
+        }}
+      />
+
+      <Screen
+        name="bundle"
+        component={Bundle}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: 'none',
+          },
         }}
       />
     </Navigator>
