@@ -126,7 +126,10 @@ export function Workout() {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
-        <Button title="Iniciar treino" />
+        <Button
+          title="Iniciar treino"
+          onPress={() => navigation.navigate('exercise', { id: 'any' })}
+        />
       </View>
     </View>
   )
