@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Bundle } from '@/screens/Bundle'
 import { Home } from '@/screens/Home'
+import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
 
 export type AppRoutes = {
@@ -15,6 +16,9 @@ export type AppRoutes = {
   metrics: undefined
   profile: undefined
   bundle: {
+    id: string
+  }
+  workout: {
     id: string
   }
 }
@@ -93,6 +97,17 @@ export function AppRoutes() {
       <Screen
         name="bundle"
         component={Bundle}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: 'none',
+          },
+        }}
+      />
+
+      <Screen
+        name="workout"
+        component={Workout}
         options={{
           tabBarButton: () => null,
           tabBarStyle: {

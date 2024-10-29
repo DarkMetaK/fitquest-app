@@ -1,4 +1,5 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useNavigation } from '@react-navigation/native'
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 
@@ -30,6 +31,8 @@ export function Challenge({
   availableCurrency,
   premiumCurrency,
 }: BundleProps) {
+  const navigation = useNavigation()
+
   function handleShowPremiumInfo() {
     Dialog.show({
       type: ALERT_TYPE.INFO,
@@ -40,7 +43,10 @@ export function Challenge({
   }
 
   return (
-    <Pressable style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate('workout', { id: 'any' })}
+    >
       <Image
         source={{ uri: bannerUrl }}
         style={styles.bannerImg}

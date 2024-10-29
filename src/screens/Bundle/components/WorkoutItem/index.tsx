@@ -23,7 +23,10 @@ export function WorkoutItem({
   const navigation = useNavigation()
 
   return (
-    <Pressable style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate('workout', { id: 'any' })}
+    >
       <View style={styles.row}>
         <Text style={styles.title} numberOfLines={1}>
           {title}
