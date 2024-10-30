@@ -1,0 +1,84 @@
+diff --git a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts b/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
+index f605fed..f73f31e 100644
+--- a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
++++ b/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
+@@ -7,7 +7,9 @@ export declare type IConfigDialog = {
+     button?: string;
+     autoClose?: number | boolean;
+     closeOnOverlayTap?: boolean;
++    closeOnButtonTap?: boolean;
+     onPressButton?: () => void;
++    onConfirmPressButton?: () => void;
+     onShow?: () => void;
+     onHide?: () => void;
+ };
+diff --git a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
+index a6afe15..8753572 100644
+--- a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
++++ b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
+@@ -8,9 +8,12 @@ export type IConfigDialog = {
+   title?: string;
+   textBody?: string;
+   button?: string;
++  confirmButton?: string;
+   autoClose?: number | boolean;
+   closeOnOverlayTap?: boolean;
++  closeOnButtonTap?: boolean;
+   onPressButton?: () => void;
++  onConfirmPressButton?: () => void;
+   onShow?: () => void;
+   onHide?: () => void;
+ };
+@@ -178,15 +181,32 @@ export class Dialog extends React.Component<IProps, IState> {
+    */
+   private _buttonRender = (): JSX.Element => {
+     const { styles } = this.state;
+-    const { type, onPressButton, button } = this.state.config!;
+-    if (button) {
+-      return (
+-        <TouchableOpacity style={StyleSheet.flatten([styles.button, styles[type]])} onPress={onPressButton ?? this._close}>
+-          <Text style={styles.buttonLabel}>{button}</Text>
+-        </TouchableOpacity>
+-      );
+-    }
+-    return <></>;
++    const { type, onPressButton, button, onConfirmPressButton, confirmButton, closeOnButtonTap } = this.state.config!;
++
++    return (
++      <View style={styles.containerButton}>
++        {button && (
++          <TouchableOpacity style={StyleSheet.flatten([styles.button, styles[type]])}
++          onPress={onPressButton ? closeOnButtonTap ? () => {
++            onPressButton()
++            this._close()
++          } : onPressButton : this._close}
++          >
++            <Text style={styles.buttonLabel}>{button}</Text>
++          </TouchableOpacity>
++        )}
++        {confirmButton && (
++          <TouchableOpacity style={StyleSheet.flatten([styles.button, styles[type]])}
++          onPress={onConfirmPressButton ? closeOnButtonTap ? () => {
++            onConfirmPressButton()
++            this._close()
++          } : onConfirmPressButton : this._close}
++          >
++            <Text style={styles.buttonLabel}>{confirmButton}</Text>
++          </TouchableOpacity>
++        )}
++      </View>
++    );
+   };
+ 
+   /**
+@@ -287,6 +307,10 @@ const __styles = (isDark: boolean) =>
+       textAlign: 'center',
+       color: Color.get('label', isDark),
+     },
++    containerButton: {
++      flexDirection: 'row',
++      justifyContent: 'space-evenly',
++    },
+     button: {
+       borderRadius: 50,
+       height: 40,

@@ -35,6 +35,7 @@ export function Exercise() {
         clearWorkout()
         navigation.goBack()
       },
+      closeOnButtonTap: true,
     })
 
     return true
