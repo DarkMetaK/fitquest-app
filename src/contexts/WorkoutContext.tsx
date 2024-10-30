@@ -19,9 +19,9 @@ interface WorkoutContextProps {
   startWorkout: (workoutId: string) => void
   completeExercise: () => void
   returnToPreviousExercise: () => void
-  increaseIntervalDuration: () => void
   finishInterval: () => void
   finishWorkout: () => void
+  clearWorkout: () => void
 }
 
 interface WorkoutContextProviderProps {
@@ -76,13 +76,8 @@ export function WorkoutContextProvider({
 
   async function returnToPreviousExercise() {
     setCurrentExerciseIndex(currentExerciseIndex - 1)
+    setCompletedExercises(completedExercises.slice(0, -1))
     finishInterval()
-  }
-
-  async function increaseIntervalDuration() {
-    if (intervalDuration !== null) {
-      setIntervalDuration(intervalDuration + 20)
-    }
   }
 
   async function finishInterval() {
@@ -91,6 +86,10 @@ export function WorkoutContextProvider({
 
   async function finishWorkout() {
     // TODO: send completed exercises to the server
+    clearWorkout()
+  }
+
+  function clearWorkout() {
     setActiveWorkoutId('')
     setExercises([])
     setCompletedExercises([])
@@ -110,9 +109,9 @@ export function WorkoutContextProvider({
         startWorkout,
         completeExercise,
         returnToPreviousExercise,
-        increaseIntervalDuration,
         finishInterval,
         finishWorkout,
+        clearWorkout,
       }}
     >
       {children}

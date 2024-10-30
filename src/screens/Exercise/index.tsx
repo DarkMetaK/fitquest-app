@@ -1,4 +1,7 @@
-import { Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { useEffect } from 'react'
+import { BackHandler, Text, View } from 'react-native'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ProgressBar } from '@/components/ProgressBar'
@@ -9,14 +12,54 @@ import { Interval } from './components/Interval'
 import { styles } from './styles'
 
 export function Exercise() {
+  const navigation = useNavigation()
   const insets = useSafeAreaInsets()
-  const { intervalDuration, currentExercise } = useWorkout()
+  const {
+    exercises,
+    completedExercises,
+    intervalDuration,
+    currentExercise,
+    clearWorkout,
+  } = useWorkout()
+
+  const totalExercises = exercises.length
+  const totalCompletedExercises = completedExercises.length
+
+  function handleStop() {
+    Dialog.show({
+      type: ALERT_TYPE.WARNING,
+      title: 'Deseja parar o treino?',
+      textBody: 'Se você parar o treino, não poderá continuar de onde parou.',
+      button: 'Parar',
+      onPressButton: () => {
+        clearWorkout()
+        navigation.goBack()
+      },
+    })
+
+    return true
+  }
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleStop,
+    )
+
+    return () => backHandler.remove()
+  }, [])
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.headerText}>Exercise 1/11</Text>
-        <ProgressBar totalSteps={11} currentStep={1} onBackPress={() => {}} />
+        <Text style={styles.headerText}>
+          Exercise {totalCompletedExercises}/{totalExercises}
+        </Text>
+        <ProgressBar
+          totalSteps={totalExercises}
+          currentStep={totalCompletedExercises}
+          onBackPress={handleStop}
+        />
       </View>
 
       {intervalDuration ? (

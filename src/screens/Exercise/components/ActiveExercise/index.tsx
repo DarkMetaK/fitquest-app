@@ -25,10 +25,14 @@ export function ActiveExercise({
   const [remainingTime, setRemainingTime] = useState(duration)
   const timer = useRef<NodeJS.Timeout>()
 
-  const { completeExercise } = useWorkout()
+  const { completedExercises, completeExercise, returnToPreviousExercise } =
+    useWorkout()
   const insets = useSafeAreaInsets()
 
   useEffect(() => {
+    setRemainingTime(duration)
+    setIsPlaying(true)
+
     timer.current = setInterval(() => {
       setRemainingTime((prev) => {
         if (prev === 0) {
@@ -44,7 +48,7 @@ export function ActiveExercise({
     return () => {
       clearInterval(timer.current)
     }
-  }, [completeExercise])
+  }, [completeExercise, duration])
 
   function handlePlayPause() {
     const currentlyPlaying = isPlaying
@@ -63,6 +67,18 @@ export function ActiveExercise({
           return prev - 1
         })
       }, 1000)
+    }
+  }
+
+  function handleSkip() {
+    clearInterval(timer.current)
+    completeExercise()
+  }
+
+  function handleBackPress() {
+    if (completedExercises.length > 0) {
+      clearInterval(timer.current)
+      returnToPreviousExercise()
     }
   }
 
@@ -99,7 +115,11 @@ export function ActiveExercise({
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
         <View style={styles.controls}>
-          <TouchableOpacity style={styles.controlButton}>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={handleBackPress}
+            disabled={completedExercises.length === 0}
+          >
             <Material
               name="skip-previous"
               size={32}
@@ -115,7 +135,12 @@ export function ActiveExercise({
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.controlButton}>
-            <Material name="skip-next" size={32} color={themes.COLORS.WHITE} />
+            <Material
+              name="skip-next"
+              size={32}
+              color={themes.COLORS.WHITE}
+              onPress={handleSkip}
+            />
           </TouchableOpacity>
         </View>
       </View>
