@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { Image, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,12 +7,14 @@ import logoImage from '@/assets/logo.png'
 import decorationImage from '@/assets/welcome-img.png'
 import { Button } from '@/components/Button'
 import { useAuth } from '@/hooks/useAuth'
+import { AuthRoutes } from '@/routes/auth.routes'
 
 import { styles } from './styles'
 
-export function Welcome() {
+type WelcomeProps = NativeStackScreenProps<AuthRoutes, 'welcome'>
+
+export function Welcome({ navigation }: WelcomeProps) {
   const { user, token } = useAuth()
-  const navigation = useNavigation()
 
   useEffect(() => {
     if (token) {

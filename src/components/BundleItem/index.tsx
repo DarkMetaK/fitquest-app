@@ -17,7 +17,7 @@ export function BundleItem({ bannerUrl, title, levelsAmount }: BundleProps) {
   const navigation = useNavigation()
 
   function handleBundleDetails() {
-    navigation.navigate('bundle', { id: '1' })
+    navigation.navigate('stack', { screen: 'bundle', params: { id: '1' } })
   }
 
   return (

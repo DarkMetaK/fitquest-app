@@ -1,8 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
-import {
-  BottomTabNavigationProp,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigatorScreenParams } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Bundle } from '@/screens/Bundle'
@@ -11,31 +10,46 @@ import { Home } from '@/screens/Home'
 import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
 
-export type AppRoutes = {
+type TabRoutes = {
   home: undefined
   exchange: undefined
   metrics: undefined
   profile: undefined
+}
+
+type NoTabRoutes = {
   bundle: {
     id: string
   }
   workout: {
     id: string
   }
-  exercise: {
-    id: string
-  }
+  exercise: undefined
 }
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>
+export type AppRoutes = {
+  tabs: NavigatorScreenParams<TabRoutes>
+  stack: NavigatorScreenParams<NoTabRoutes>
+}
 
-const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
+const AppNavigation = createNativeStackNavigator()
+const TabNavigation = createBottomTabNavigator<TabRoutes>()
+const NoTabNavigation = createNativeStackNavigator<NoTabRoutes>()
 
 export function AppRoutes() {
+  return (
+    <AppNavigation.Navigator screenOptions={{ headerShown: false }}>
+      <AppNavigation.Screen name="tabs" component={TabRoutes} />
+      <AppNavigation.Screen name="stack" component={NoTabRoutes} />
+    </AppNavigation.Navigator>
+  )
+}
+
+function TabRoutes() {
   const insets = useSafeAreaInsets()
 
   return (
-    <Navigator
+    <TabNavigation.Navigator
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: themes.COLORS.GREEN_6,
@@ -54,7 +68,7 @@ export function AppRoutes() {
         },
       }}
     >
-      <Screen
+      <TabNavigation.Screen
         name="home"
         component={Home}
         options={{
@@ -65,7 +79,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen
+      <TabNavigation.Screen
         name="exchange"
         component={Home}
         options={{
@@ -76,7 +90,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen
+      <TabNavigation.Screen
         name="metrics"
         component={Home}
         options={{
@@ -87,7 +101,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen
+      <TabNavigation.Screen
         name="profile"
         component={Home}
         options={{
@@ -97,39 +111,16 @@ export function AppRoutes() {
           tabBarLabel: 'Perfil',
         }}
       />
+    </TabNavigation.Navigator>
+  )
+}
 
-      <Screen
-        name="bundle"
-        component={Bundle}
-        options={{
-          tabBarButton: () => null,
-          tabBarStyle: {
-            display: 'none',
-          },
-        }}
-      />
-
-      <Screen
-        name="workout"
-        component={Workout}
-        options={{
-          tabBarButton: () => null,
-          tabBarStyle: {
-            display: 'none',
-          },
-        }}
-      />
-
-      <Screen
-        name="exercise"
-        component={Exercise}
-        options={{
-          tabBarButton: () => null,
-          tabBarStyle: {
-            display: 'none',
-          },
-        }}
-      />
-    </Navigator>
+function NoTabRoutes() {
+  return (
+    <NoTabNavigation.Navigator screenOptions={{ headerShown: false }}>
+      <NoTabNavigation.Screen name="bundle" component={Bundle} />
+      <NoTabNavigation.Screen name="workout" component={Workout} />
+      <NoTabNavigation.Screen name="exercise" component={Exercise} />
+    </NoTabNavigation.Navigator>
   )
 }

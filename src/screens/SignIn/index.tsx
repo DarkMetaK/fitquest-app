@@ -1,6 +1,6 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import { useAuth } from '@/hooks/useAuth'
+import { AuthRoutes } from '@/routes/auth.routes'
 import themes from '@/themes'
 import { AppError } from '@/utils/AppError'
 
@@ -28,9 +29,10 @@ const signInSchema = z.object({
 
 type SignInForm = z.infer<typeof signInSchema>
 
-export function SignIn() {
+type SignInProps = NativeStackScreenProps<AuthRoutes, 'sign-in'>
+
+export function SignIn({ navigation }: SignInProps) {
   const { handleSignIn } = useAuth()
-  const navigation = useNavigation()
 
   const {
     control,

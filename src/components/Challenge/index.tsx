@@ -45,7 +45,9 @@ export function Challenge({
   return (
     <Pressable
       style={styles.container}
-      onPress={() => navigation.navigate('workout', { id: 'any' })}
+      onPress={() =>
+        navigation.navigate('stack', { screen: 'workout', params: { id: '1' } })
+      }
     >
       <Image
         source={{ uri: bannerUrl }}

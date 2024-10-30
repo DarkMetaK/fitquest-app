@@ -25,7 +25,9 @@ export function WorkoutItem({
   return (
     <Pressable
       style={styles.container}
-      onPress={() => navigation.navigate('workout', { id: 'any' })}
+      onPress={() =>
+        navigation.navigate('stack', { screen: 'workout', params: { id: '1' } })
+      }
     >
       <View style={styles.row}>
         <Text style={styles.title} numberOfLines={1}>

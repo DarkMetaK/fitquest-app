@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useEffect, useState } from 'react'
 import { BackHandler } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ProgressBar } from '@/components/ProgressBar'
 import { useAuth } from '@/hooks/useAuth'
+import { AuthRoutes } from '@/routes/auth.routes'
 import { AppError } from '@/utils/AppError'
 
 import { AgeStep } from './components/AgeStep'
@@ -16,9 +17,10 @@ import { RoutineStep } from './components/Routine'
 import { WeightStep } from './components/WeightStep'
 import { styles } from './styles'
 
-export function Metadata() {
+type MetadataProps = NativeStackScreenProps<AuthRoutes, 'metadata'>
+
+export function Metadata({ navigation }: MetadataProps) {
   const [currentStep, setCurrentStep] = useState(1)
-  const navigation = useNavigation()
   const { handleCompleteRegistration } = useAuth()
 
   useEffect(() => {

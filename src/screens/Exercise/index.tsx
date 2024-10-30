@@ -1,5 +1,4 @@
-import { useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { BackHandler, Text, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -27,7 +26,7 @@ export function Exercise() {
 
   function handleStop() {
     Dialog.show({
-      type: ALERT_TYPE.WARNING,
+      type: ALERT_TYPE.DANGER,
       title: 'Deseja parar o treino?',
       textBody: 'Se você parar o treino, não poderá continuar de onde parou.',
       button: 'Parar',
@@ -41,14 +40,14 @@ export function Exercise() {
     return true
   }
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       handleStop,
     )
 
     return () => backHandler.remove()
-  }, [])
+  })
 
   return (
     <View style={styles.container}>

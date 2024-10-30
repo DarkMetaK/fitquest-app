@@ -25,9 +25,17 @@ export function ActiveExercise({
   const [remainingTime, setRemainingTime] = useState(duration)
   const timer = useRef<NodeJS.Timeout>()
 
-  const { completedExercises, completeExercise, returnToPreviousExercise } =
-    useWorkout()
+  const {
+    exercises,
+    completedExercises,
+    completeExercise,
+    currentExerciseIndex,
+    returnToPreviousExercise,
+  } = useWorkout()
   const insets = useSafeAreaInsets()
+
+  const hasPreviousExercise = completedExercises.length > 0
+  const hasNextExercise = currentExerciseIndex < exercises.length
 
   useEffect(() => {
     setRemainingTime(duration)
@@ -118,12 +126,14 @@ export function ActiveExercise({
           <TouchableOpacity
             style={styles.controlButton}
             onPress={handleBackPress}
-            disabled={completedExercises.length === 0}
+            disabled={!hasPreviousExercise}
           >
             <Material
               name="skip-previous"
               size={32}
-              color={themes.COLORS.WHITE}
+              color={
+                hasPreviousExercise ? themes.COLORS.WHITE : themes.COLORS.GRAY_6
+              }
             />
           </TouchableOpacity>
 
@@ -131,15 +141,24 @@ export function ActiveExercise({
             style={styles.controlButton}
             onPress={handlePlayPause}
           >
-            <Material name="pause" size={32} color={themes.COLORS.WHITE} />
+            <Material
+              name={isPlaying ? 'pause' : 'play-arrow'}
+              size={32}
+              color={themes.COLORS.WHITE}
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.controlButton}>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={handleSkip}
+            disabled={!hasNextExercise}
+          >
             <Material
               name="skip-next"
               size={32}
-              color={themes.COLORS.WHITE}
-              onPress={handleSkip}
+              color={
+                hasNextExercise ? themes.COLORS.WHITE : themes.COLORS.GRAY_6
+              }
             />
           </TouchableOpacity>
         </View>
