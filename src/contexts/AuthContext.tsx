@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 
 import { authenticateWithPassword } from '@/api/authenticate-with-password'
 import { getCurrentCustomer } from '@/api/get-current-customer'
@@ -40,6 +47,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [authIsLoading, setAuthIsLoading] = useState(true)
   const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<UserProps | null>(null)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     async function loadUserData() {
@@ -96,7 +104,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
-  async function handleSignOut() {
+  const handleSignOut = useCallback(async () => {
     setAuthIsLoading(true)
 
     setUser(null)
@@ -105,8 +113,16 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     await removeAuthToken()
     await removeUser()
 
+    api.defaults.headers.common.Authorization = null
+
+    queryClient.invalidateQueries()
+
     setAuthIsLoading(false)
-  }
+  }, [queryClient])
+
+  useEffect(() => {
+    api.registerInterceptTokenManager(handleSignOut)
+  }, [handleSignOut])
 
   async function handleCompleteRegistration() {
     try {

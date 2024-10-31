@@ -31,15 +31,15 @@ export default function App() {
     <SafeAreaProvider>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      <AuthContextProvider>
-        <WorkoutContextProvider>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AuthContextProvider>
+          <WorkoutContextProvider>
             <AlertNotificationRoot>
               {fontsLoaded ? <Routes /> : <Loading />}
             </AlertNotificationRoot>
-          </QueryClientProvider>
-        </WorkoutContextProvider>
-      </AuthContextProvider>
+          </WorkoutContextProvider>
+        </AuthContextProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   )
 }

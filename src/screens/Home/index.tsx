@@ -1,15 +1,28 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useQuery } from '@tanstack/react-query'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
+import { getActiveChallenges } from '@/api/get-active-challenges'
 import { BundleItem } from '@/components/BundleItem'
 import { Challenge } from '@/components/Challenge'
 import { Header } from '@/components/Header'
+import { Loading } from '@/components/Loading'
 import { Walking } from '@/components/Walking'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
 export function Home() {
+  const {
+    data: availableChallenges,
+    isLoading: isLoadingChallenges,
+    error: challengesError,
+  } = useQuery({
+    queryKey: ['challenges'],
+    queryFn: getActiveChallenges,
+    refetchInterval: 1000 * 60 * 1, // 5 minutes
+  })
+
   return (
     <>
       <Header />
@@ -49,21 +62,25 @@ export function Home() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ flexGrow: 1, gap: 20 }}
           >
-            <Challenge
-              title="Desafio de Flexibilidade"
-              bannerUrl="https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg"
-              estimatedTime={5}
-              availableCurrency={20}
-              premiumCurrency={10}
-            />
-
-            <Challenge
-              title="Desafio de Flexibilidade"
-              bannerUrl="https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg"
-              estimatedTime={5}
-              availableCurrency={20}
-              premiumCurrency={10}
-            />
+            {isLoadingChallenges ? (
+              <Loading />
+            ) : challengesError ? (
+              <Text>Erro buscando desafios</Text>
+            ) : (
+              availableChallenges!.challenges.map((challenge) => (
+                <Challenge
+                  key={challenge.id}
+                  title={challenge.name}
+                  bannerUrl={challenge.bannerUrl.replace(
+                    'http://localhost:3333',
+                    String(process.env.EXPO_PUBLIC_API_URL),
+                  )}
+                  estimatedTime={5}
+                  availableCurrency={challenge.availableCurrency}
+                  premiumCurrency={challenge.availableCurrency * 1.5}
+                />
+              ))
+            )}
           </ScrollView>
 
           <View style={styles.walking}>
