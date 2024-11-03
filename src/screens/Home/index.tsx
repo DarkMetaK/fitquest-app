@@ -1,18 +1,36 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useQuery } from '@tanstack/react-query'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 import { getActiveChallenges } from '@/api/get-active-challenges'
+import { getCustomerActiveBundle } from '@/api/get-customer-active-bundle'
 import { BundleItem } from '@/components/BundleItem'
+import { Button } from '@/components/Button'
 import { Challenge } from '@/components/Challenge'
 import { Header } from '@/components/Header'
-import { Loading } from '@/components/Loading'
+import { Skeleton } from '@/components/Skeleton'
 import { Walking } from '@/components/Walking'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
 export function Home() {
+  const {
+    data: activeBundle,
+    isLoading: isLoadingBundle,
+    error: activeBundleError,
+  } = useQuery({
+    queryKey: ['activeBundle'],
+    queryFn: getCustomerActiveBundle,
+    staleTime: Infinity,
+  })
+
   const {
     data: availableChallenges,
     isLoading: isLoadingChallenges,
@@ -45,11 +63,23 @@ export function Home() {
             </TouchableOpacity>
           </View>
 
-          <BundleItem
-            bannerUrl="https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg"
-            levelsAmount={30}
-            title="Iniciante"
-          />
+          {isLoadingBundle || activeBundleError ? (
+            <Skeleton style={{ width: '100%', height: 208 }} />
+          ) : activeBundle?.activeBundle ? (
+            <BundleItem
+              bannerUrl={activeBundle.activeBundle.bannerUrl.replace(
+                'localhost:3333',
+                String(process.env.EXPO_PUBLIC_API_URL),
+              )}
+              levelsAmount={activeBundle.activeBundle.workouts.length}
+              title={activeBundle.activeBundle.name}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhum plano ativo</Text>
+              <Button title="Escolher plano" />
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -57,31 +87,44 @@ export function Home() {
             <Text style={styles.title}>Desafios Diários</Text>
           </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, gap: 20 }}
-          >
-            {isLoadingChallenges ? (
-              <Loading />
-            ) : challengesError ? (
-              <Text>Erro buscando desafios</Text>
-            ) : (
-              availableChallenges!.challenges.map((challenge) => (
+          {isLoadingChallenges || challengesError ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, gap: 20 }}
+            >
+              <Skeleton style={{ width: 230, height: 120 }} />
+              <Skeleton style={{ width: 230, height: 120 }} />
+            </ScrollView>
+          ) : (
+            <FlatList
+              data={availableChallenges?.challenges}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
                 <Challenge
-                  key={challenge.id}
-                  title={challenge.name}
-                  bannerUrl={challenge.bannerUrl.replace(
+                  id={item.id}
+                  title={item.name}
+                  bannerUrl={item.bannerUrl.replace(
                     'http://localhost:3333',
                     String(process.env.EXPO_PUBLIC_API_URL),
                   )}
-                  estimatedTime={5}
-                  availableCurrency={challenge.availableCurrency}
-                  premiumCurrency={challenge.availableCurrency * 1.5}
+                  exercisesAmount={item.stepsAmount}
+                  availableCurrency={item.availableCurrency}
+                  premiumCurrency={item.availableCurrency * 1.5}
                 />
-              ))
-            )}
-          </ScrollView>
+              )}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    Nenhum desafio disponível
+                  </Text>
+                </View>
+              )}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, gap: 20 }}
+            />
+          )}
 
           <View style={styles.walking}>
             <Walking

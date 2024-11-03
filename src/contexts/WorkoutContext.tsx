@@ -1,12 +1,17 @@
+import { useNavigation } from '@react-navigation/native'
 import { createContext, ReactNode, useState } from 'react'
+
+import { completeWorkout } from '@/api/complete-workout'
+import { savePendingFinishedWorkout } from '@/libs/async-storage/pending-finished-workouts'
 
 interface Exercise {
   id: string
   name: string
   duration: number
+  repetitions?: number | null
   demonstrationUrl: string
-  audioUrl?: string
-  videoUrl?: string
+  audioUrl?: string | null
+  videoUrl?: string | null
 }
 
 interface WorkoutContextProps {
@@ -16,7 +21,7 @@ interface WorkoutContextProps {
   currentExercise: Exercise | null
   currentExerciseIndex: number
   intervalDuration: number | null
-  startWorkout: (workoutId: string) => void
+  startWorkout: (props: { workoutId: string; exercises: Exercise[] }) => void
   completeExercise: () => void
   returnToPreviousExercise: () => void
   finishInterval: () => void
@@ -39,34 +44,31 @@ export function WorkoutContextProvider({
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
   const [intervalDuration, setIntervalDuration] = useState<number | null>(null)
 
+  const { navigate } = useNavigation()
+
   const currentExercise = exercises[currentExerciseIndex] || null
 
-  async function startWorkout(workoutId: string) {
+  async function startWorkout({
+    workoutId,
+    exercises,
+  }: {
+    workoutId: string
+    exercises: Exercise[]
+  }) {
     setActiveWorkoutId(workoutId)
     setCurrentExerciseIndex(0)
     setIntervalDuration(null)
     setCompletedExercises([])
 
-    // TODO: fetch exercises
-    setExercises([
-      {
-        id: '1',
-        name: 'Jumping Jacks',
-        duration: 30,
-        demonstrationUrl:
-          'https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg',
-      },
-      {
-        id: '2',
-        name: 'Push-ups',
-        duration: 60,
-        demonstrationUrl:
-          'https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg',
-      },
-    ])
+    setExercises(exercises)
   }
 
   async function completeExercise() {
+    if (currentExerciseIndex + 1 === exercises.length) {
+      await finishWorkout()
+      return
+    }
+
     const currentExercise = exercises[currentExerciseIndex]
 
     setCompletedExercises([...completedExercises, currentExercise])
@@ -85,7 +87,14 @@ export function WorkoutContextProvider({
   }
 
   async function finishWorkout() {
-    // TODO: send completed exercises to the server
+    try {
+      await completeWorkout({ workoutId: activeWorkoutId })
+    } catch (error) {
+      await savePendingFinishedWorkout({ workoutId: activeWorkoutId })
+      console.log(error)
+    }
+
+    navigate('stack', { screen: 'finishedWorkout' })
     clearWorkout()
   }
 

@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
 
   exercises: {
-    flex: 1,
+    flexGrow: 1,
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,

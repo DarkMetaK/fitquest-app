@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Button } from '@/components/Button'
 import { useWorkout } from '@/hooks/useWorkout'
+import { convertSecondsToTime } from '@/utils/time-converter'
 
 import { styles } from './styles'
 
@@ -62,7 +63,9 @@ export function Interval() {
 
         <View style={styles.main}>
           <Text style={styles.rest}>Descanso</Text>
-          <Text style={styles.timer}>{remainingTime}</Text>
+          <Text style={styles.timer}>
+            {convertSecondsToTime(remainingTime)}
+          </Text>
         </View>
       </View>
 

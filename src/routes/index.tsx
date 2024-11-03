@@ -1,4 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native'
 import { View } from 'react-native'
 
 import { Loading } from '@/components/Loading'
@@ -13,9 +12,7 @@ export function Routes() {
 
   return (
     <View style={{ flex: 1, backgroundColor: themes.COLORS.GRAY_1 }}>
-      <NavigationContainer>
-        {authIsLoading ? <Loading /> : user ? <AppRoutes /> : <AuthRoutes />}
-      </NavigationContainer>
+      {authIsLoading ? <Loading /> : user ? <AppRoutes /> : <AuthRoutes />}
     </View>
   )
 }

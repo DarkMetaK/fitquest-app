@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Bundle } from '@/screens/Bundle'
 import { Exercise } from '@/screens/Exercise'
+import { FinishedWorkout } from '@/screens/FinishedWorkout'
 import { Home } from '@/screens/Home'
 import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
@@ -25,6 +26,7 @@ type NoTabRoutes = {
     id: string
   }
   exercise: undefined
+  finishedWorkout: undefined
 }
 
 export type AppRoutes = {
@@ -121,6 +123,10 @@ function NoTabRoutes() {
       <NoTabNavigation.Screen name="bundle" component={Bundle} />
       <NoTabNavigation.Screen name="workout" component={Workout} />
       <NoTabNavigation.Screen name="exercise" component={Exercise} />
+      <NoTabNavigation.Screen
+        name="finishedWorkout"
+        component={FinishedWorkout}
+      />
     </NoTabNavigation.Navigator>
   )
 }

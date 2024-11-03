@@ -149,6 +149,7 @@ export function SignUp({ navigation }: SignUpProps) {
                 <Input
                   placeholder="E-mail"
                   iconName="email"
+                  keyboardType="email-address"
                   error={errors.email?.message}
                   value={field.value}
                   onChangeText={field.onChange}

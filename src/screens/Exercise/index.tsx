@@ -69,6 +69,7 @@ export function Exercise() {
           <ActiveExercise
             name={currentExercise.name}
             duration={currentExercise.duration}
+            repetitions={currentExercise.repetitions}
             demonstrationUrl={currentExercise.demonstrationUrl}
           />
         )

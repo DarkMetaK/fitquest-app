@@ -34,6 +34,12 @@ export const styles = StyleSheet.create({
     color: themes.COLORS.GRAY_12,
   },
 
+  details: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+
   subtitle: {
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.SM,

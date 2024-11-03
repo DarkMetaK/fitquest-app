@@ -47,6 +47,18 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
 
+  repetitions: {
+    marginBottom: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  repetitionsText: {
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.MD,
+    color: themes.COLORS.GRAY_8,
+  },
+
   timer: {
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE['4XL'],

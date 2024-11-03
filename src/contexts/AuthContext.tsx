@@ -134,7 +134,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         weight: metadata.weight!,
         height: metadata.height!,
         goal: metadata.goal!,
-        weeklyGoal: metadata.weeklyGoal!,
+        weeklyStreakGoal: metadata.weeklyGoal!,
       })
 
       const { customer } = await getCurrentCustomer()

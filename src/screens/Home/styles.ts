@@ -48,4 +48,35 @@ export const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderTopColor: themes.COLORS.GRAY_2,
   },
+
+  emptyContainer: {
+    flex: 1,
+    width: '100%',
+    minHeight: 96,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: themes.COLORS.GRAY_2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+
+    backgroundColor: themes.COLORS.WHITE,
+  },
+
+  emptyText: {
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.SM,
+    color: themes.COLORS.GRAY_12,
+    textAlign: 'center',
+  },
+
+  error: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.SM,
+    color: themes.COLORS.RED_3,
+  },
 })

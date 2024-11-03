@@ -9,25 +9,20 @@ import { Crystal } from '../Icon'
 import { styles } from './styles'
 
 interface BundleProps {
+  id: string
   title: string
   bannerUrl: string
   difficulty?: 'Beginner' | 'Intermediate' | 'Advanced'
-  estimatedTime: number
+  exercisesAmount: number
   availableCurrency: number
   premiumCurrency: number
 }
 
-const DIFFICULTY = {
-  Beginner: 'Iniciante',
-  Intermediate: 'Intermediário',
-  Advanced: 'Avançado',
-}
-
 export function Challenge({
+  id,
   title,
   bannerUrl,
-  difficulty = 'Beginner',
-  estimatedTime,
+  exercisesAmount,
   availableCurrency,
   premiumCurrency,
 }: BundleProps) {
@@ -46,7 +41,7 @@ export function Challenge({
     <Pressable
       style={styles.container}
       onPress={() =>
-        navigation.navigate('stack', { screen: 'workout', params: { id: '1' } })
+        navigation.navigate('stack', { screen: 'workout', params: { id } })
       }
     >
       <Image
@@ -63,10 +58,7 @@ export function Challenge({
           </Text>
 
           <View style={styles.info}>
-            <Text style={styles.infoText}>{DIFFICULTY[difficulty]}</Text>
-            <Text style={styles.infoText}>
-              {` • `} {estimatedTime} min
-            </Text>
+            <Text style={styles.infoText}>{exercisesAmount} Exercícios</Text>
           </View>
         </View>
 

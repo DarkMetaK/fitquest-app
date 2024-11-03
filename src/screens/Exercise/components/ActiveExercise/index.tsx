@@ -5,12 +5,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useWorkout } from '@/hooks/useWorkout'
 import themes from '@/themes'
+import { convertSecondsToTime } from '@/utils/time-converter'
 
 import { styles } from './styles'
 
 interface ActiveExerciseProps {
   name: string
   duration: number
+  repetitions?: number | null
   demonstrationUrl: string
   audioUrl?: string
   videoUrl?: string
@@ -19,6 +21,7 @@ interface ActiveExerciseProps {
 export function ActiveExercise({
   name,
   duration,
+  repetitions,
   demonstrationUrl,
 }: ActiveExerciseProps) {
   const [isPlaying, setIsPlaying] = useState(true)
@@ -38,6 +41,10 @@ export function ActiveExercise({
   const hasNextExercise = currentExerciseIndex < exercises.length
 
   useEffect(() => {
+    if (repetitions) {
+      return
+    }
+
     setRemainingTime(duration)
     setIsPlaying(true)
 
@@ -56,7 +63,7 @@ export function ActiveExercise({
     return () => {
       clearInterval(timer.current)
     }
-  }, [completeExercise, duration])
+  }, [completeExercise, duration, repetitions])
 
   function handlePlayPause() {
     const currentlyPlaying = isPlaying
@@ -116,7 +123,16 @@ export function ActiveExercise({
         </View>
 
         <View style={styles.main}>
-          <Text style={styles.timer}>{remainingTime}</Text>
+          {repetitions ? (
+            <View style={styles.repetitions}>
+              <Text style={styles.timer}>{repetitions}</Text>
+              <Text style={styles.repetitionsText}>Repetições</Text>
+            </View>
+          ) : (
+            <Text style={styles.timer}>
+              {convertSecondsToTime(remainingTime)}
+            </Text>
+          )}
           <Text style={styles.title}>{name}</Text>
         </View>
       </View>
@@ -137,16 +153,18 @@ export function ActiveExercise({
             />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.controlButton}
-            onPress={handlePlayPause}
-          >
-            <Material
-              name={isPlaying ? 'pause' : 'play-arrow'}
-              size={32}
-              color={themes.COLORS.WHITE}
-            />
-          </TouchableOpacity>
+          {!repetitions && (
+            <TouchableOpacity
+              style={styles.controlButton}
+              onPress={handlePlayPause}
+            >
+              <Material
+                name={isPlaying ? 'pause' : 'play-arrow'}
+                size={32}
+                color={themes.COLORS.WHITE}
+              />
+            </TouchableOpacity>
+          )}
 
           <TouchableOpacity
             style={styles.controlButton}
@@ -154,7 +172,7 @@ export function ActiveExercise({
             disabled={!hasNextExercise}
           >
             <Material
-              name="skip-next"
+              name={repetitions ? 'check' : 'skip-next'}
               size={32}
               color={
                 hasNextExercise ? themes.COLORS.WHITE : themes.COLORS.GRAY_6

@@ -6,7 +6,7 @@ interface RegisterMetadataRequest {
   weight: number
   height: number
   goal: string
-  weeklyGoal: number
+  weeklyStreakGoal: number
 }
 
 export async function registerMetadata({
@@ -15,7 +15,7 @@ export async function registerMetadata({
   weight,
   height,
   goal,
-  weeklyGoal,
+  weeklyStreakGoal,
 }: RegisterMetadataRequest) {
   await api.post('/customers/metadata', {
     phone,
@@ -23,6 +23,6 @@ export async function registerMetadata({
     weight,
     height,
     goal,
-    weeklyGoal,
+    weeklyStreakGoal,
   })
 }
