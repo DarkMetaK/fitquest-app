@@ -9,13 +9,14 @@ import { Bundle } from '@/screens/Bundle'
 import { Exercise } from '@/screens/Exercise'
 import { FinishedWorkout } from '@/screens/FinishedWorkout'
 import { Home } from '@/screens/Home'
+import { Market } from '@/screens/Market'
 import { Metrics } from '@/screens/Metrics'
 import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
 
 type TabRoutes = {
   home: undefined
-  exchange: undefined
+  market: undefined
   metrics: undefined
   profile: undefined
 }
@@ -85,8 +86,8 @@ function TabRoutes() {
       />
 
       <TabNavigation.Screen
-        name="exchange"
-        component={Home}
+        name="market"
+        component={Market}
         options={{
           tabBarIcon: ({ color }) => (
             <Material name="currency-exchange" size={24} color={color} />

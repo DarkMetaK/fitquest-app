@@ -22,6 +22,7 @@ export default {
 
     RED_3: '#E2504C',
     YELLOW_6: '#FFD542',
+    YELLOW_8: '#FBB500',
     ORANGE_6: '#FF882F',
     BLUE_6: '#38B9F6',
   },
