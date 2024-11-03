@@ -4,6 +4,7 @@ import { NavigatorScreenParams } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { AllBundles } from '@/screens/AllBundles'
 import { Bundle } from '@/screens/Bundle'
 import { Exercise } from '@/screens/Exercise'
 import { FinishedWorkout } from '@/screens/FinishedWorkout'
@@ -19,6 +20,7 @@ type TabRoutes = {
 }
 
 type NoTabRoutes = {
+  allBundles: undefined
   bundle: {
     id: string
   }
@@ -120,6 +122,7 @@ function TabRoutes() {
 function NoTabRoutes() {
   return (
     <NoTabNavigation.Navigator screenOptions={{ headerShown: false }}>
+      <NoTabNavigation.Screen name="allBundles" component={AllBundles} />
       <NoTabNavigation.Screen name="bundle" component={Bundle} />
       <NoTabNavigation.Screen name="workout" component={Workout} />
       <NoTabNavigation.Screen name="exercise" component={Exercise} />

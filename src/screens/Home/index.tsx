@@ -1,4 +1,5 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useNavigation } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import {
   FlatList,
@@ -21,6 +22,8 @@ import themes from '@/themes'
 import { styles } from './styles'
 
 export function Home() {
+  const navigation = useNavigation()
+
   const {
     data: activeBundle,
     isLoading: isLoadingBundle,
@@ -53,7 +56,12 @@ export function Home() {
           <View style={styles.sectionHeader}>
             <Text style={styles.title}>Plano Atual</Text>
 
-            <TouchableOpacity style={styles.seeAllContainer}>
+            <TouchableOpacity
+              style={styles.seeAllContainer}
+              onPress={() =>
+                navigation.navigate('stack', { screen: 'allBundles' })
+              }
+            >
               <Text style={styles.seeAll}>Ver todos</Text>
               <Material
                 name="chevron-right"
