@@ -9,6 +9,7 @@ import { Bundle } from '@/screens/Bundle'
 import { Exercise } from '@/screens/Exercise'
 import { FinishedWorkout } from '@/screens/FinishedWorkout'
 import { Home } from '@/screens/Home'
+import { Metrics } from '@/screens/Metrics'
 import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
 
@@ -96,7 +97,7 @@ function TabRoutes() {
 
       <TabNavigation.Screen
         name="metrics"
-        component={Home}
+        component={Metrics}
         options={{
           tabBarIcon: ({ color }) => (
             <Material name="calendar-month" size={24} color={color} />
