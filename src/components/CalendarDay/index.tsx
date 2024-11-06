@@ -8,20 +8,20 @@ import { styles } from './styles'
 
 interface CalendarDayProps {
   date: Date
-  status?: 'regular' | 'rest' | 'streak'
-  disabled: boolean
+  status?: 'STREAK' | 'INACTIVE' | 'REST'
+  disabled?: boolean
 }
 
 const statusIcon: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> =
   {
-    rest: 'sleep',
-    streak: 'fire',
+    REST: 'sleep',
+    STREAK: 'fire',
   }
 
 export function CalendarDay({
   date,
-  status = 'regular',
-  disabled,
+  status = 'INACTIVE',
+  disabled = false,
 }: CalendarDayProps) {
   return (
     <View
@@ -34,13 +34,13 @@ export function CalendarDay({
       ]}
       testID="container"
     >
-      {status !== 'regular' && (
+      {status !== 'INACTIVE' && (
         <View style={styles.icon}>
           <MaterialCommunityIcons
             name={statusIcon[status]}
             size={16}
             color={
-              status === 'streak'
+              status === 'STREAK'
                 ? themes.COLORS.ORANGE_6
                 : themes.COLORS.BLUE_6
             }

@@ -6,7 +6,6 @@ import { Header } from '@/components/Header'
 import themes from '@/themes'
 
 import { styles } from './styles'
-
 export function Metrics() {
   return (
     <>

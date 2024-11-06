@@ -41,7 +41,7 @@ export function Home() {
   } = useQuery({
     queryKey: ['challenges'],
     queryFn: getActiveChallenges,
-    refetchInterval: 1000 * 60 * 1, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
   })
 
   return (

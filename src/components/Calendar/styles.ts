@@ -64,4 +64,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 8,
   },
+
+  error: {
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.SM,
+    color: themes.COLORS.WHITE,
+    backgroundColor: themes.COLORS.RED_3,
+  },
 })

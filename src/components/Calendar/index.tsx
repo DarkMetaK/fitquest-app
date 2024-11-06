@@ -1,12 +1,15 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
+import { getActivitiesHistory } from '@/api/get-activities-history'
 import themes from '@/themes'
 import { capitalizeString } from '@/utils/capitalize-string'
 
 import { CalendarDay } from '../CalendarDay'
+import { Skeleton } from '../Skeleton'
 import { styles } from './styles'
 
 export function Calendar() {
@@ -16,6 +19,20 @@ export function Calendar() {
 
   const dateMonth = capitalizeString(currentDate.format('MMMM'))
   const dateYear = currentDate.format('YYYY')
+  const formattedDate = currentDate.format('YYYY-MM-DD')
+
+  const {
+    data: activitiesHistory,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['activities', formattedDate],
+    queryFn: () => getActivitiesHistory({ from: formattedDate }),
+    refetchInterval: 1000 * 60 * 1, // 1 hour
+    enabled:
+      currentDate.isBefore(new Date(), 'date') ||
+      currentDate.isSame(new Date(), 'date'),
+  })
 
   const calendarWeeks = useMemo(() => {
     const daysInMonthArray = Array.from({
@@ -51,7 +68,7 @@ export function Calendar() {
       ...daysInMonthArray.map((date) => {
         return {
           date,
-          disabled: date.endOf('day').isBefore(new Date()),
+          disabled: false,
         }
       }),
       ...nextMonthFillArray.map((date) => {
@@ -78,14 +95,12 @@ export function Calendar() {
     setCurrentDate((state) => state.subtract(1, 'month'))
   }
 
+  if (isLoading) {
+    return <Skeleton style={{ width: '100%', height: 280 }} />
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.goalContainer}>
-        <Text style={styles.title}>Meta Semanal</Text>
-
-        <Text style={styles.title}>3/4</Text>
-      </View>
-
       <View style={styles.calendar}>
         <View style={styles.calendarHeader}>
           <Text style={styles.calendarTitle}>
@@ -113,13 +128,18 @@ export function Calendar() {
           </View>
         </View>
 
+        {error && <Text style={styles.error}>Falha ao atualizar dados</Text>}
         <View style={styles.calendarBody}>
           {calendarWeeks.map(({ weekDays, week }) => (
             <View key={week} style={styles.calendarWeek}>
               {weekDays.map(({ date, disabled }) => (
                 <CalendarDay
                   key={date.toString()}
-                  status="regular"
+                  status={
+                    activitiesHistory?.activities.data.find((activity) => {
+                      return dayjs(activity.date).isSame(date, 'date')
+                    })?.activityType
+                  }
                   date={date.toDate()}
                   disabled={disabled}
                 />

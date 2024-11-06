@@ -3,6 +3,7 @@ import { createContext, ReactNode, useState } from 'react'
 
 import { completeWorkout } from '@/api/complete-workout'
 import { savePendingFinishedWorkout } from '@/libs/async-storage/pending-finished-workouts'
+import { queryClient } from '@/libs/react-query'
 
 interface Exercise {
   id: string
@@ -89,6 +90,7 @@ export function WorkoutContextProvider({
   async function finishWorkout() {
     try {
       await completeWorkout({ workoutId: activeWorkoutId })
+      queryClient.invalidateQueries({ queryKey: ['activities'] })
     } catch (error) {
       await savePendingFinishedWorkout({ workoutId: activeWorkoutId })
       console.log(error)
