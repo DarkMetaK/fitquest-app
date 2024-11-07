@@ -1,22 +1,23 @@
 diff --git a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts b/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
-index f605fed..f73f31e 100644
+index f605fed..47efc9d 100644
 --- a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
 +++ b/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
-@@ -7,7 +7,9 @@ export declare type IConfigDialog = {
+@@ -7,7 +7,10 @@ export declare type IConfigDialog = {
      button?: string;
      autoClose?: number | boolean;
      closeOnOverlayTap?: boolean;
 +    closeOnButtonTap?: boolean;
++    showIndicator?: boolean;
      onPressButton?: () => void;
 +    onConfirmPressButton?: () => void;
      onShow?: () => void;
      onHide?: () => void;
  };
 diff --git a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
-index a6afe15..8753572 100644
+index a6afe15..51eb9d0 100644
 --- a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
 +++ b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
-@@ -8,9 +8,12 @@ export type IConfigDialog = {
+@@ -8,9 +8,13 @@ export type IConfigDialog = {
    title?: string;
    textBody?: string;
    button?: string;
@@ -24,12 +25,13 @@ index a6afe15..8753572 100644
    autoClose?: number | boolean;
    closeOnOverlayTap?: boolean;
 +  closeOnButtonTap?: boolean;
++  showIndicator?: boolean;
    onPressButton?: () => void;
 +  onConfirmPressButton?: () => void;
    onShow?: () => void;
    onHide?: () => void;
  };
-@@ -178,15 +181,32 @@ export class Dialog extends React.Component<IProps, IState> {
+@@ -178,15 +182,32 @@ export class Dialog extends React.Component<IProps, IState> {
     */
    private _buttonRender = (): JSX.Element => {
      const { styles } = this.state;
@@ -71,7 +73,32 @@ index a6afe15..8753572 100644
    };
  
    /**
-@@ -287,6 +307,10 @@ const __styles = (isDark: boolean) =>
+@@ -210,7 +231,7 @@ export class Dialog extends React.Component<IProps, IState> {
+ 
+     const {
+       styles,
+-      config: { title, type, textBody },
++      config: { title, type, textBody, showIndicator = true },
+     } = this.state;
+     const { _buttonRender } = this;
+     return (
+@@ -222,8 +243,13 @@ export class Dialog extends React.Component<IProps, IState> {
+         }) => (this._popupHeight = height)}
+         style={StyleSheet.flatten([styles.cardContainer, { transform: [{ translateY: this._positionDialog }] }])}
+       >
+-        <View style={styles.backendImage} />
+-        <Image source={getImage(type)} resizeMode="contain" style={StyleSheet.flatten([styles.image, styles[`${type}Image`]])} />
++        {showIndicator &&
++        <>
++         <View style={styles.backendImage} />
++
++          <Image source={getImage(type)} resizeMode="contain" style={StyleSheet.flatten([styles.image, styles[`${type}Image`]])} />
++        </>
++        }
+         <View style={styles.cardBody}>
+           {title && <Text style={styles.titleLabel}>{title}</Text>}
+           {textBody && <Text style={styles.descLabel}>{textBody}</Text>}
+@@ -287,6 +313,10 @@ const __styles = (isDark: boolean) =>
        textAlign: 'center',
        color: Color.get('label', isDark),
      },
