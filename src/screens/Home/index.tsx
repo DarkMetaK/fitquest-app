@@ -76,7 +76,7 @@ export function Home() {
           ) : activeBundle?.activeBundle ? (
             <BundleItem
               bannerUrl={activeBundle.activeBundle.bannerUrl.replace(
-                'localhost:3333',
+                'http://localhost:3333',
                 String(process.env.EXPO_PUBLIC_API_URL),
               )}
               levelsAmount={activeBundle.activeBundle.workouts.length}

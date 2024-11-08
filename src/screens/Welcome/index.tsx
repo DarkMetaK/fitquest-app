@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { Image, Text, View } from 'react-native'
@@ -14,6 +15,8 @@ import { styles } from './styles'
 type WelcomeProps = NativeStackScreenProps<AuthRoutes, 'welcome'>
 
 export function Welcome({ navigation }: WelcomeProps) {
+  AsyncStorage.clear()
+
   const { user, token } = useAuth()
 
   useEffect(() => {

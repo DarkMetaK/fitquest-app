@@ -1,25 +1,59 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
+import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
+import { useCallback, useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 
-import { getCustomerDetails } from '@/api/get-customer-details'
+import { CustomerDetails, getCustomerDetails } from '@/api/get-customer-details'
 import { Calendar } from '@/components/Calendar'
 import { Header } from '@/components/Header'
 import { Skeleton } from '@/components/Skeleton'
+import { getMetrics } from '@/libs/async-storage/metrics'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
 export function Metrics() {
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
+  const [metrics, setMetrics] = useState<Pick<
+    CustomerDetails,
+    'totalWorkouts' | 'totalCalories' | 'totalExercises' | 'highestStreak'
+  > | null>()
+
   const {
-    data: customerData,
-    isLoading,
+    data: fetchedMetrics,
+    isLoading: isFetchingMetrics,
     error,
   } = useQuery({
     queryKey: ['metadata'],
     queryFn: getCustomerDetails,
     staleTime: Infinity,
+    enabled: !metrics && !isLoadingMetrics,
   })
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadMetricsStorage() {
+        setIsLoadingMetrics(true)
+
+        const storagedMetrics = await getMetrics()
+
+        if (storagedMetrics) {
+          setMetrics(storagedMetrics)
+        }
+
+        setIsLoadingMetrics(false)
+      }
+
+      loadMetricsStorage()
+    }, []),
+  )
+
+  useEffect(() => {
+    if (fetchedMetrics) {
+      setMetrics(fetchedMetrics.customer)
+    }
+  }, [fetchedMetrics])
 
   return (
     <>
@@ -38,12 +72,12 @@ export function Metrics() {
             <View style={styles.row}>
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  {isLoading ? (
+                  {isLoadingMetrics || isFetchingMetrics ? (
                     <Skeleton style={{ maxWidth: 24, height: 16 }} />
                   ) : (
                     !error && (
                       <Text style={styles.metricValue}>
-                        {customerData?.customer.totalWorkouts}
+                        {metrics?.totalWorkouts}
                       </Text>
                     )
                   )}
@@ -59,12 +93,12 @@ export function Metrics() {
 
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  {isLoading ? (
+                  {isLoadingMetrics || isFetchingMetrics ? (
                     <Skeleton style={{ maxWidth: 24, height: 16 }} />
                   ) : (
                     !error && (
                       <Text style={styles.metricValue}>
-                        {customerData?.customer.totalExercises}
+                        {metrics?.totalExercises}
                       </Text>
                     )
                   )}
@@ -81,12 +115,12 @@ export function Metrics() {
             <View style={styles.row}>
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  {isLoading ? (
+                  {isLoadingMetrics || isFetchingMetrics ? (
                     <Skeleton style={{ maxWidth: 24, height: 16 }} />
                   ) : (
                     !error && (
                       <Text style={styles.metricValue}>
-                        {customerData?.customer.totalCalories}
+                        {metrics?.totalCalories}
                       </Text>
                     )
                   )}
@@ -101,12 +135,12 @@ export function Metrics() {
 
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  {isLoading ? (
+                  {isLoadingMetrics || isFetchingMetrics ? (
                     <Skeleton style={{ maxWidth: 24, height: 16 }} />
                   ) : (
                     !error && (
                       <Text style={styles.metricValue}>
-                        {customerData?.customer.highestStreak}
+                        {metrics?.highestStreak}
                       </Text>
                     )
                   )}

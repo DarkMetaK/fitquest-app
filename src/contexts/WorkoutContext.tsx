@@ -7,6 +7,11 @@ import {
   getCustomerDetails,
   GetCustomerDetailsResponse,
 } from '@/api/get-customer-details'
+import {
+  getCurrentBundleInfo,
+  saveCurrentBundleInfo,
+} from '@/libs/async-storage/current-bundle'
+import { saveMetrics } from '@/libs/async-storage/metrics'
 import { savePendingFinishedWorkout } from '@/libs/async-storage/pending-finished-workouts'
 
 interface Exercise {
@@ -118,6 +123,20 @@ export function WorkoutContextProvider({
       queryKey: ['activities', 'metadata'],
     })
 
+    const storagedBundle = await getCurrentBundleInfo()
+
+    if (storagedBundle) {
+      const bundleWorkout = storagedBundle.workouts.find(
+        (workout) => workout.id === activeWorkoutId,
+      )
+
+      if (bundleWorkout) {
+        storagedBundle.finishedWorkoutsIds.push(activeWorkoutId)
+
+        await saveCurrentBundleInfo(storagedBundle)
+      }
+    }
+
     const {
       customer: {
         highestStreak,
@@ -126,8 +145,19 @@ export function WorkoutContextProvider({
         totalCalories,
         totalExercises,
         totalWorkouts,
+        premiumExpiresAt,
       },
     } = await getCustomerDetails()
+
+    await saveMetrics({
+      highestStreak,
+      currencyAmount,
+      experienceAmount,
+      totalCalories,
+      totalExercises,
+      totalWorkouts,
+      premiumExpiresAt,
+    })
 
     const cached = queryClient.getQueryData<GetCustomerDetailsResponse>([
       'metadata',

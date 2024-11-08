@@ -1,20 +1,22 @@
 import { api } from '@/libs/axios'
 
-export interface GetCustomerActiveBundleResponse {
-  activeBundle: {
+export interface CustomerActiveBundle {
+  id: string
+  name: string
+  description?: string | null
+  bannerUrl: string
+  isPremium: boolean
+  workouts: {
     id: string
     name: string
-    description?: string | null
-    bannerUrl: string
-    isPremium: boolean
-    workouts: {
-      id: string
-      name: string
-      availableExperience: number
-      availableCurrency: number
-      stepsAmount: number
-    }[]
-  } | null
+    availableExperience: number
+    availableCurrency: number
+    stepsAmount: number
+  }[]
+}
+
+export interface GetCustomerActiveBundleResponse {
+  activeBundle: CustomerActiveBundle | null
 }
 
 export async function getCustomerActiveBundle(): Promise<GetCustomerActiveBundleResponse> {

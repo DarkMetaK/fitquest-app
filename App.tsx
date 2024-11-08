@@ -6,7 +6,6 @@ import {
   Poppins_700Bold,
   useFonts,
 } from '@expo-google-fonts/poppins'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NavigationContainer } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { StatusBar } from 'expo-status-bar'
@@ -25,8 +24,6 @@ export default function App() {
     Poppins_500Medium,
     Poppins_700Bold,
   })
-
-  // AsyncStorage.clear()
 
   return (
     <SafeAreaProvider>

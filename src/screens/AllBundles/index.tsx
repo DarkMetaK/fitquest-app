@@ -1,7 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,30 +12,33 @@ import { subscribeBundle } from '@/api/subscribe-bundle'
 import { Button } from '@/components/Button'
 import { Skeleton } from '@/components/Skeleton'
 import {
-  getUserBundleInfo,
-  saveUserBundleInfo,
-  UserBundleInfo,
-} from '@/libs/async-storage/bundle'
+  CurrentBundleInfo,
+  getCurrentBundleInfo,
+  saveCurrentBundleInfo,
+} from '@/libs/async-storage/current-bundle'
 import themes from '@/themes'
 import { AppError } from '@/utils/AppError'
 
 import { styles } from './styles'
 
 export function AllBundles() {
-  const [bundleStorage, setBundleStorage] = useState<UserBundleInfo>({})
-  const navigation = useNavigation()
+  const [currentBundleStorage, setCurrentBundleStorage] =
+    useState<CurrentBundleInfo | null>(null)
 
+  const navigation = useNavigation()
   const queryClient = useQueryClient()
 
-  useFocusEffect(() => {
-    async function loadBundleStorage() {
-      const storage = await getUserBundleInfo()
+  useFocusEffect(
+    useCallback(() => {
+      async function loadCurrentBundleStorage() {
+        const storagedBundle = await getCurrentBundleInfo()
 
-      setBundleStorage(storage)
-    }
+        setCurrentBundleStorage(storagedBundle)
+      }
 
-    loadBundleStorage()
-  })
+      loadCurrentBundleStorage()
+    }, []),
+  )
 
   const {
     data: availableBundles,
@@ -51,26 +54,7 @@ export function AllBundles() {
     useMutation({
       mutationFn: subscribeBundle,
       onMutate: async ({ bundleId }) => {
-        await saveUserBundleInfo({ subscribedBundleId: bundleId })
-
-        await queryClient.invalidateQueries({ queryKey: ['activeBundle'] })
-
-        const cached =
-          queryClient.getQueryData<GetCustomerActiveBundleResponse>([
-            'activeBundle',
-          ])
-
-        if (cached) {
-          queryClient.setQueryData<GetCustomerActiveBundleResponse>(
-            ['activeBundle'],
-            {
-              activeBundle:
-                availableBundles?.bundles.find(
-                  (bundle) => bundle.id === bundleId,
-                ) ?? null,
-            },
-          )
-        }
+        await updateCache(bundleId)
 
         navigation.navigate('stack', {
           screen: 'bundle',
@@ -94,6 +78,36 @@ export function AllBundles() {
         console.log(error)
       },
     })
+
+  async function updateCache(bundleId: string) {
+    const subscribedBundle = availableBundles?.bundles.find(
+      (bundle) => bundle.id === bundleId,
+    )
+
+    await queryClient.invalidateQueries({
+      queryKey: ['activeBundle'],
+    })
+
+    await saveCurrentBundleInfo({
+      ...subscribedBundle!,
+      finishedWorkoutsIds: [],
+    })
+
+    const cached = queryClient.getQueryData<GetCustomerActiveBundleResponse>([
+      'activeBundle',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetCustomerActiveBundleResponse>(
+        ['activeBundle'],
+        {
+          activeBundle: {
+            ...subscribedBundle!,
+          },
+        },
+      )
+    }
+  }
 
   function handleShowPremiumInfo() {
     Dialog.show({
@@ -153,12 +167,12 @@ export function AllBundles() {
                 title={
                   item.isPremium
                     ? 'Exclusivo Premium'
-                    : bundleStorage.subscribedBundleId === item.id
+                    : currentBundleStorage?.id === item.id
                       ? 'Em Andamento'
                       : 'Iniciar'
                 }
                 variant={
-                  item.isPremium || bundleStorage.subscribedBundleId === item.id
+                  item.isPremium || currentBundleStorage?.id === item.id
                     ? 'secondary'
                     : 'primary'
                 }
@@ -167,9 +181,7 @@ export function AllBundles() {
                     ? handleShowPremiumInfo
                     : () => handleSubscribeBundle(item.id)
                 }
-                disabled={
-                  isSubmitting || bundleStorage.subscribedBundleId === item.id
-                }
+                disabled={isSubmitting || currentBundleStorage?.id === item.id}
                 isLoading={isSubmitting}
               />
             </View>
