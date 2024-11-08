@@ -34,4 +34,14 @@ export const styles = StyleSheet.create({
     color: themes.COLORS.YELLOW_6,
     textTransform: 'uppercase',
   },
+
+  error: {
+    borderRadius: 8,
+    paddingHorizontal: 12,
+
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.SM,
+    color: themes.COLORS.WHITE,
+    backgroundColor: themes.COLORS.RED_3,
+  },
 })

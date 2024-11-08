@@ -1,9 +1,13 @@
 import { useNavigation } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 import { createContext, ReactNode, useState } from 'react'
 
 import { completeWorkout } from '@/api/complete-workout'
+import {
+  getCustomerDetails,
+  GetCustomerDetailsResponse,
+} from '@/api/get-customer-details'
 import { savePendingFinishedWorkout } from '@/libs/async-storage/pending-finished-workouts'
-import { queryClient } from '@/libs/react-query'
 
 interface Exercise {
   id: string
@@ -46,6 +50,7 @@ export function WorkoutContextProvider({
   const [intervalDuration, setIntervalDuration] = useState<number | null>(null)
 
   const { navigate } = useNavigation()
+  const queryClient = useQueryClient()
 
   const currentExercise = exercises[currentExerciseIndex] || null
 
@@ -90,7 +95,7 @@ export function WorkoutContextProvider({
   async function finishWorkout() {
     try {
       await completeWorkout({ workoutId: activeWorkoutId })
-      queryClient.invalidateQueries({ queryKey: ['activities'] })
+      await updateCache()
     } catch (error) {
       await savePendingFinishedWorkout({ workoutId: activeWorkoutId })
       console.log(error)
@@ -106,6 +111,41 @@ export function WorkoutContextProvider({
     setCompletedExercises([])
     setCurrentExerciseIndex(0)
     setIntervalDuration(null)
+  }
+
+  async function updateCache() {
+    await queryClient.invalidateQueries({
+      queryKey: ['activities', 'metadata'],
+    })
+
+    const {
+      customer: {
+        highestStreak,
+        currencyAmount,
+        experienceAmount,
+        totalCalories,
+        totalExercises,
+        totalWorkouts,
+      },
+    } = await getCustomerDetails()
+
+    const cached = queryClient.getQueryData<GetCustomerDetailsResponse>([
+      'metadata',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetCustomerDetailsResponse>(['metadata'], {
+        customer: {
+          ...cached.customer,
+          highestStreak,
+          currencyAmount,
+          experienceAmount,
+          totalCalories,
+          totalExercises,
+          totalWorkouts,
+        },
+      })
+    }
   }
 
   return (

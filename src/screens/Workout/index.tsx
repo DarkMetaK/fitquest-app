@@ -35,7 +35,7 @@ export function Workout() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['workout', params.id],
     queryFn: () => getWorkout({ id: params.id }),
-    refetchInterval: 1000 * 60 * 60, // 1 hour
+    refetchInterval: 1000 * 60 * 60 * 1, // 1 hour
   })
 
   function handleStartWorkout() {

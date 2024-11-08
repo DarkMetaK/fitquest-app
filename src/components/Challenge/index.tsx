@@ -30,7 +30,8 @@ export function Challenge({
 
   function handleShowPremiumInfo() {
     Dialog.show({
-      type: ALERT_TYPE.INFO,
+      type: ALERT_TYPE.WARNING,
+      showIndicator: false,
       title: 'Recompensa Premium',
       textBody: 'Usuários premium ganham mais cristais ao completar desafios.',
       button: 'Fechar',

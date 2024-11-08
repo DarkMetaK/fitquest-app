@@ -28,7 +28,7 @@ export function Calendar() {
   } = useQuery({
     queryKey: ['activities', formattedDate],
     queryFn: () => getActivitiesHistory({ from: formattedDate }),
-    refetchInterval: 1000 * 60 * 1, // 1 hour
+    refetchInterval: 1000 * 60 * 60 * 1, // 1 hour
     enabled:
       currentDate.isBefore(new Date(), 'date') ||
       currentDate.isSame(new Date(), 'date'),

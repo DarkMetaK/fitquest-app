@@ -1,12 +1,26 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
+import { useQuery } from '@tanstack/react-query'
 import { ScrollView, Text, View } from 'react-native'
 
+import { getCustomerDetails } from '@/api/get-customer-details'
 import { Calendar } from '@/components/Calendar'
 import { Header } from '@/components/Header'
+import { Skeleton } from '@/components/Skeleton'
 import themes from '@/themes'
 
 import { styles } from './styles'
+
 export function Metrics() {
+  const {
+    data: customerData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['metadata'],
+    queryFn: getCustomerDetails,
+    staleTime: Infinity,
+  })
+
   return (
     <>
       <Header />
@@ -24,7 +38,16 @@ export function Metrics() {
             <View style={styles.row}>
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  <Text style={styles.metricValue}>10</Text>
+                  {isLoading ? (
+                    <Skeleton style={{ maxWidth: 24, height: 16 }} />
+                  ) : (
+                    !error && (
+                      <Text style={styles.metricValue}>
+                        {customerData?.customer.totalWorkouts}
+                      </Text>
+                    )
+                  )}
+
                   <MaterialCommunityIcons
                     name="trophy"
                     size={20}
@@ -36,7 +59,15 @@ export function Metrics() {
 
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  <Text style={styles.metricValue}>30</Text>
+                  {isLoading ? (
+                    <Skeleton style={{ maxWidth: 24, height: 16 }} />
+                  ) : (
+                    !error && (
+                      <Text style={styles.metricValue}>
+                        {customerData?.customer.totalExercises}
+                      </Text>
+                    )
+                  )}
                   <MaterialCommunityIcons
                     name="weight-lifter"
                     size={20}
@@ -50,7 +81,15 @@ export function Metrics() {
             <View style={styles.row}>
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  <Text style={styles.metricValue}>1520</Text>
+                  {isLoading ? (
+                    <Skeleton style={{ maxWidth: 24, height: 16 }} />
+                  ) : (
+                    !error && (
+                      <Text style={styles.metricValue}>
+                        {customerData?.customer.totalCalories}
+                      </Text>
+                    )
+                  )}
                   <MaterialCommunityIcons
                     name="heart"
                     size={20}
@@ -62,7 +101,15 @@ export function Metrics() {
 
               <View style={styles.metricItem}>
                 <View style={styles.metricHeader}>
-                  <Text style={styles.metricValue}>15</Text>
+                  {isLoading ? (
+                    <Skeleton style={{ maxWidth: 24, height: 16 }} />
+                  ) : (
+                    !error && (
+                      <Text style={styles.metricValue}>
+                        {customerData?.customer.highestStreak}
+                      </Text>
+                    )
+                  )}
                   <MaterialCommunityIcons
                     name="fire"
                     size={20}
