@@ -58,4 +58,14 @@ export const styles = StyleSheet.create({
     backgroundColor: themes.COLORS.GRAY_2,
     marginVertical: 16,
   },
+
+  error: {
+    borderRadius: 8,
+    paddingHorizontal: 12,
+
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.SM,
+    color: themes.COLORS.WHITE,
+    backgroundColor: themes.COLORS.RED_3,
+  },
 })

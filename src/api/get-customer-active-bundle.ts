@@ -1,10 +1,10 @@
 import { api } from '@/libs/axios'
 
-interface GetCustomerActiveBundleResponse {
+export interface GetCustomerActiveBundleResponse {
   activeBundle: {
     id: string
     name: string
-    description?: string
+    description?: string | null
     bannerUrl: string
     isPremium: boolean
     workouts: {
