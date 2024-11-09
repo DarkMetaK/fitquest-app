@@ -80,6 +80,9 @@ export function Home() {
                 String(process.env.EXPO_PUBLIC_API_URL),
               )}
               levelsAmount={activeBundle.activeBundle.workouts.length}
+              completedLevels={
+                activeBundle.activeBundle.finishedWorkoutsIds.length
+              }
               title={activeBundle.activeBundle.name}
             />
           ) : (
@@ -119,6 +122,7 @@ export function Home() {
                   exercisesAmount={item.stepsAmount}
                   availableCurrency={item.availableCurrency}
                   premiumCurrency={item.availableCurrency * 1.5}
+                  isFinished={false}
                 />
               )}
               ListEmptyComponent={() => (

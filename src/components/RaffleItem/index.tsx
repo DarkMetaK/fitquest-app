@@ -39,7 +39,10 @@ export function RaffleItem({
     <Pressable
       style={styles.container}
       onPress={() =>
-        navigation.navigate('stack', { screen: 'workout', params: { id } })
+        navigation.navigate('stack', {
+          screen: 'workout',
+          params: { id, isFinished: false },
+        })
       }
     >
       <Image

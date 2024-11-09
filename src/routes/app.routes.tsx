@@ -28,6 +28,7 @@ type NoTabRoutes = {
   }
   workout: {
     id: string
+    isFinished: boolean
   }
   exercise: undefined
   finishedWorkout: undefined

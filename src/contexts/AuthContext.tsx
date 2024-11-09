@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   createContext,
@@ -10,18 +11,9 @@ import {
 import { authenticateWithPassword } from '@/api/authenticate-with-password'
 import { getCurrentCustomer } from '@/api/get-current-customer'
 import { registerMetadata } from '@/api/register-metadata'
-import {
-  getAuthToken,
-  removeAuthToken,
-  saveAuthToken,
-} from '@/libs/async-storage/auth-token'
+import { getAuthToken, saveAuthToken } from '@/libs/async-storage/auth-token'
 import { getUserMetadata } from '@/libs/async-storage/metadata'
-import {
-  getUser,
-  removeUser,
-  saveUser,
-  UserProps,
-} from '@/libs/async-storage/user'
+import { getUser, saveUser, UserProps } from '@/libs/async-storage/user'
 import { api } from '@/libs/axios'
 
 interface AuthContextProps {
@@ -110,8 +102,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setUser(null)
     setToken(null)
 
-    await removeAuthToken()
-    await removeUser()
+    await AsyncStorage.clear()
 
     api.defaults.headers.common.Authorization = null
 

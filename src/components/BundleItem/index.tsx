@@ -10,10 +10,16 @@ import { styles } from './styles'
 interface BundleProps {
   title: string
   levelsAmount: number
+  completedLevels: number
   bannerUrl: string
 }
 
-export function BundleItem({ bannerUrl, title, levelsAmount }: BundleProps) {
+export function BundleItem({
+  bannerUrl,
+  title,
+  levelsAmount,
+  completedLevels,
+}: BundleProps) {
   const navigation = useNavigation()
 
   function handleBundleDetails() {
@@ -40,8 +46,13 @@ export function BundleItem({ bannerUrl, title, levelsAmount }: BundleProps) {
         </View>
 
         <View style={styles.progress}>
-          <Text style={styles.level}>{`0/${levelsAmount} fases`}</Text>
-          <ProgressBar totalSteps={30} currentStep={1} />
+          <Text
+            style={styles.level}
+          >{`${completedLevels}/${levelsAmount} fases`}</Text>
+          <ProgressBar
+            totalSteps={levelsAmount}
+            currentStep={completedLevels}
+          />
         </View>
       </Pressable>
     </ImageBackground>

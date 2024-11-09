@@ -103,6 +103,7 @@ export function AllBundles() {
         {
           activeBundle: {
             ...subscribedBundle!,
+            finishedWorkoutsIds: cached.activeBundle?.finishedWorkoutsIds || [],
           },
         },
       )

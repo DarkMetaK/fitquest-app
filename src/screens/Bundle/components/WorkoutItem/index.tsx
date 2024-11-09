@@ -8,17 +8,19 @@ import themes from '@/themes'
 import { styles } from './styles'
 
 interface WorkoutItemProps {
+  id: string
   title: string
-  estimatedTime: number
   availableCurrency: number
   exercisesAmount: number
+  isFinished?: boolean
 }
 
 export function WorkoutItem({
+  id,
   title,
   availableCurrency,
-  estimatedTime,
   exercisesAmount,
+  isFinished = false,
 }: WorkoutItemProps) {
   const navigation = useNavigation()
 
@@ -26,7 +28,10 @@ export function WorkoutItem({
     <Pressable
       style={styles.container}
       onPress={() =>
-        navigation.navigate('stack', { screen: 'workout', params: { id: '1' } })
+        navigation.navigate('stack', {
+          screen: 'workout',
+          params: { id, isFinished },
+        })
       }
     >
       <View style={styles.row}>
@@ -42,13 +47,24 @@ export function WorkoutItem({
       </View>
 
       <View style={styles.row}>
-        <Text style={styles.infoText}>
-          {estimatedTime} min {` • `} {exercisesAmount} exercícios
-        </Text>
+        <Text style={styles.infoText}>{exercisesAmount} Exercícios</Text>
 
         <View style={styles.currency}>
-          <Crystal color={themes.COLORS.BLUE_6} size={16} />
-          <Text style={styles.currencyText}>{availableCurrency}</Text>
+          <Crystal
+            color={isFinished ? themes.COLORS.GRAY_8 : themes.COLORS.BLUE_6}
+            size={16}
+          />
+          <Text
+            style={[
+              styles.currencyText,
+              isFinished && {
+                color: themes.COLORS.GRAY_8,
+                textDecorationLine: 'line-through',
+              },
+            ]}
+          >
+            {availableCurrency}
+          </Text>
         </View>
       </View>
     </Pressable>

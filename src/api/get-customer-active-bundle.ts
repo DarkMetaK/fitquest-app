@@ -13,6 +13,7 @@ export interface CustomerActiveBundle {
     availableCurrency: number
     stepsAmount: number
   }[]
+  finishedWorkoutsIds: string[]
 }
 
 export interface GetCustomerActiveBundleResponse {

@@ -16,6 +16,7 @@ interface BundleProps {
   exercisesAmount: number
   availableCurrency: number
   premiumCurrency: number
+  isFinished?: boolean
 }
 
 export function Challenge({
@@ -25,6 +26,7 @@ export function Challenge({
   exercisesAmount,
   availableCurrency,
   premiumCurrency,
+  isFinished = false,
 }: BundleProps) {
   const navigation = useNavigation()
 
@@ -42,7 +44,10 @@ export function Challenge({
     <Pressable
       style={styles.container}
       onPress={() =>
-        navigation.navigate('stack', { screen: 'workout', params: { id } })
+        navigation.navigate('stack', {
+          screen: 'workout',
+          params: { id, isFinished },
+        })
       }
     >
       <Image

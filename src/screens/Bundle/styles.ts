@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    flexGrow: 1,
     height: 160,
     paddingVertical: 16,
     paddingHorizontal: 24,

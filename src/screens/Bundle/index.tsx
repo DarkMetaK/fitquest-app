@@ -1,5 +1,6 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useNavigation } from '@react-navigation/native'
+import { useQuery } from '@tanstack/react-query'
 import {
   ImageBackground,
   ScrollView,
@@ -7,9 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { getCustomerActiveBundle } from '@/api/get-customer-active-bundle'
+import { Loading } from '@/components/Loading'
 import themes from '@/themes'
+import { AppError } from '@/utils/AppError'
 
 import { WorkoutItem } from './components/WorkoutItem'
 import { styles } from './styles'
@@ -17,6 +22,35 @@ import { styles } from './styles'
 export function Bundle() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation()
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['activeBundle'],
+    queryFn: getCustomerActiveBundle,
+    staleTime: Infinity,
+  })
+
+  if (isLoading || !data?.activeBundle) {
+    return <Loading />
+  }
+
+  if (error) {
+    const isAppError = error instanceof AppError
+
+    const title = isAppError
+      ? error.message
+      : 'Erro no servidor, tente novamente mais tarde.'
+
+    Dialog.show({
+      type: ALERT_TYPE.DANGER,
+      title: 'Erro',
+      textBody: title,
+      button: 'Fechar',
+    })
+
+    console.log(error)
+
+    navigation.goBack()
+  }
 
   return (
     <View style={styles.container}>
@@ -43,7 +77,7 @@ export function Bundle() {
           <Material name="arrow-back" size={24} color={themes.COLORS.WHITE} />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Treino Iniciante</Text>
+        <Text style={styles.title}>{data.activeBundle.name}</Text>
       </ImageBackground>
 
       <ScrollView
@@ -51,82 +85,37 @@ export function Bundle() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.workouts}>
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 1"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
+          {data.activeBundle.workouts.map((workout) => {
+            const isFinished = data.activeBundle!.finishedWorkoutsIds.includes(
+              workout.id,
+            )
 
-            <View style={styles.unchecked} />
-          </View>
+            return (
+              <View
+                key={workout.id}
+                style={{ position: 'relative', justifyContent: 'center' }}
+              >
+                <WorkoutItem
+                  id={workout.id}
+                  title={workout.name}
+                  availableCurrency={workout.availableCurrency}
+                  exercisesAmount={workout.stepsAmount}
+                  isFinished={isFinished}
+                />
 
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 2"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
-
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 3"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
-
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 4"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
-
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 5"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
-
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 6"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
-
-          <View style={{ position: 'relative', justifyContent: 'center' }}>
-            <WorkoutItem
-              title="Dia 7"
-              availableCurrency={10}
-              estimatedTime={30}
-              exercisesAmount={5}
-            />
-
-            <View style={styles.unchecked} />
-          </View>
+                {isFinished ? (
+                  <Material
+                    name="check"
+                    size={24}
+                    color={themes.COLORS.GREEN_6}
+                    style={styles.unchecked}
+                  />
+                ) : (
+                  <View style={styles.unchecked} />
+                )}
+              </View>
+            )
+          })}
         </View>
       </ScrollView>
     </View>

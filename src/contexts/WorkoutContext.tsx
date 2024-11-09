@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { createContext, ReactNode, useState } from 'react'
 
 import { completeWorkout } from '@/api/complete-workout'
+import { GetCustomerActiveBundleResponse } from '@/api/get-customer-active-bundle'
 import {
   getCustomerDetails,
   GetCustomerDetailsResponse,
@@ -120,7 +121,7 @@ export function WorkoutContextProvider({
 
   async function updateCache() {
     await queryClient.invalidateQueries({
-      queryKey: ['activities', 'metadata'],
+      queryKey: ['activities', 'metadata', 'activeBundle'],
     })
 
     const storagedBundle = await getCurrentBundleInfo()
@@ -131,9 +132,30 @@ export function WorkoutContextProvider({
       )
 
       if (bundleWorkout) {
-        storagedBundle.finishedWorkoutsIds.push(activeWorkoutId)
+        if (!storagedBundle.finishedWorkoutsIds.includes(activeWorkoutId)) {
+          storagedBundle.finishedWorkoutsIds.push(activeWorkoutId)
 
-        await saveCurrentBundleInfo(storagedBundle)
+          await saveCurrentBundleInfo(storagedBundle)
+
+          const cachedBundle =
+            queryClient.getQueryData<GetCustomerActiveBundleResponse>([
+              'activeBundle',
+            ])
+
+          if (cachedBundle) {
+            queryClient.setQueryData<GetCustomerActiveBundleResponse>(
+              ['activeBundle'],
+              {
+                activeBundle: cachedBundle.activeBundle
+                  ? {
+                      ...cachedBundle.activeBundle,
+                      finishedWorkoutsIds: storagedBundle.finishedWorkoutsIds,
+                    }
+                  : null,
+              },
+            )
+          }
+        }
       }
     }
 

@@ -30,7 +30,7 @@ export function Workout() {
   const navigation = useNavigation()
   const route = useRoute()
 
-  const params = route.params as { id: string }
+  const params = route.params as { id: string; isFinished?: boolean }
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['workout', params.id],
@@ -142,8 +142,23 @@ export function Workout() {
             </View>
 
             <View style={styles.infoItem}>
-              <Crystal size={16} color={themes.COLORS.BLUE_6} />
-              <Text style={styles.subtitle}>
+              <Crystal
+                size={16}
+                color={
+                  params.isFinished
+                    ? themes.COLORS.GRAY_8
+                    : themes.COLORS.BLUE_6
+                }
+              />
+              <Text
+                style={[
+                  styles.subtitle,
+                  params.isFinished && {
+                    color: themes.COLORS.GRAY_8,
+                    textDecorationLine: 'line-through',
+                  },
+                ]}
+              >
                 {data?.workout.availableCurrency} cristais
               </Text>
             </View>
