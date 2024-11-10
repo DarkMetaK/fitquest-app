@@ -11,6 +11,7 @@ import { FinishedWorkout } from '@/screens/FinishedWorkout'
 import { Home } from '@/screens/Home'
 import { Market } from '@/screens/Market'
 import { Metrics } from '@/screens/Metrics'
+import { Raffle } from '@/screens/Raffle'
 import { Workout } from '@/screens/Workout'
 import themes from '@/themes'
 
@@ -32,6 +33,9 @@ type NoTabRoutes = {
   }
   exercise: undefined
   finishedWorkout: undefined
+  raffle: {
+    id: string
+  }
 }
 
 export type AppRoutes = {
@@ -133,6 +137,7 @@ function NoTabRoutes() {
         name="finishedWorkout"
         component={FinishedWorkout}
       />
+      <NoTabNavigation.Screen name="raffle" component={Raffle} />
     </NoTabNavigation.Navigator>
   )
 }

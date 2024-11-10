@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
   },
 
   section: {
-    flex: 1,
     width: '100%',
     gap: 12,
   },
@@ -42,6 +41,14 @@ export const styles = StyleSheet.create({
     color: themes.COLORS.GREEN_8,
   },
 
+  walking: {
+    width: '100%',
+    marginTop: 4,
+    paddingTop: 16,
+    borderTopWidth: 2,
+    borderTopColor: themes.COLORS.GRAY_2,
+  },
+
   emptyContainer: {
     flex: 1,
     width: '100%',
@@ -50,6 +57,8 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     borderColor: themes.COLORS.GRAY_2,
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 12,
 
     backgroundColor: themes.COLORS.WHITE,
@@ -59,15 +68,15 @@ export const styles = StyleSheet.create({
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.SM,
     color: themes.COLORS.GRAY_12,
+    textAlign: 'center',
   },
 
   error: {
-    borderRadius: 8,
-    paddingHorizontal: 12,
-
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.SM,
-    color: themes.COLORS.WHITE,
-    backgroundColor: themes.COLORS.RED_3,
+    color: themes.COLORS.RED_3,
   },
 })

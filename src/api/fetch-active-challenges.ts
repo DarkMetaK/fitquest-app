@@ -1,6 +1,6 @@
 import { api } from '@/libs/axios'
 
-interface GetActiveChallengesResponse {
+interface FetchActiveChallengesResponse {
   challenges: {
     id: string
     name: string
@@ -13,8 +13,8 @@ interface GetActiveChallengesResponse {
   }[]
 }
 
-export async function getActiveChallenges(): Promise<GetActiveChallengesResponse> {
-  const response = await api.get<GetActiveChallengesResponse>('/challenges')
+export async function fetchActiveChallenges(): Promise<FetchActiveChallengesResponse> {
+  const response = await api.get<FetchActiveChallengesResponse>('/challenges')
 
   return response.data
 }

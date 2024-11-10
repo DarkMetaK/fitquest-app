@@ -1,54 +1,46 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useNavigation } from '@react-navigation/native'
-import { FlatList, Text, TouchableOpacity, View } from 'react-native'
+import { useQuery } from '@tanstack/react-query'
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
+import { fetchAvailableRaffles } from '@/api/fetch-available-raffles'
+import { fetchCurrentCustomerRaffles } from '@/api/fetch-current-customer-raffles'
 import { Header } from '@/components/Header'
 import { PurchasedItem } from '@/components/PurchasedItem'
 import { RaffleItem } from '@/components/RaffleItem'
+import { Skeleton } from '@/components/Skeleton'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
-const PURCHASE_HISTORY = [
-  {
-    id: '1',
-    title: 'Kit Suplementos Growth',
-    date: new Date('2024-12-31'),
-    amount: 1,
-    type: 'raffle',
-    price: 10,
-  },
-  {
-    id: '2',
-    title: 'iPhone 13',
-    date: new Date('2024-12-31'),
-    amount: 2,
-    type: 'raffle',
-    price: 20,
-  },
-]
-
-const AVAILABLE_RAFFLES = [
-  {
-    id: '1',
-    title: 'Kit Suplementos Growth',
-    bannerUrl:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWwPpDdMb-GhzJG8GtONjBgAneg0KdvjBbrw&s',
-    expiresAt: new Date('2024-12-31'),
-    isPremium: false,
-  },
-  {
-    id: '2',
-    title: 'iPhone 13',
-    bannerUrl:
-      'https://a-static.mlcdn.com.br/800x560/apple-iphone-13-128gb-estelar-tela-61-12mp/magazineluiza/234661900/d9bb81423a4ca9e0208bb75ee64fdf29.jpg',
-    expiresAt: new Date('2024-12-31'),
-    isPremium: true,
-  },
-]
-
 export function Market() {
   const navigation = useNavigation()
+
+  const {
+    data: raffles,
+    isLoading: isLoadingRaffles,
+    error: rafflesError,
+  } = useQuery({
+    queryKey: ['available-raffles'],
+    queryFn: fetchAvailableRaffles,
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+  })
+
+  const {
+    data: history,
+    isLoading: isLoadingHistory,
+    error: historyError,
+  } = useQuery({
+    queryKey: ['raffles-history'],
+    queryFn: fetchCurrentCustomerRaffles,
+    staleTime: Infinity,
+  })
 
   return (
     <>
@@ -57,30 +49,51 @@ export function Market() {
       <View style={styles.container}>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.title}>Rifas</Text>
+            <Text style={styles.title}>Sorteios</Text>
           </View>
 
-          <FlatList
-            data={AVAILABLE_RAFFLES}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <RaffleItem
-                id={item.id}
-                title={item.title}
-                bannerUrl={item.bannerUrl}
-                expiresAt={item.expiresAt}
-                isPremium={item.isPremium}
-              />
-            )}
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Nenhuma rifa disponível</Text>
-              </View>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, gap: 16 }}
-          />
+          {isLoadingRaffles || rafflesError ? (
+            <>
+              {rafflesError && (
+                <Text style={styles.error}>Falha ao buscar sorteios.</Text>
+              )}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 1, gap: 16 }}
+              >
+                <Skeleton style={{ width: 230, height: 164 }} />
+                <Skeleton style={{ width: 230, height: 164 }} />
+              </ScrollView>
+            </>
+          ) : (
+            <FlatList
+              data={raffles?.raffles}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <RaffleItem
+                  id={item.id}
+                  title={item.name}
+                  bannerUrl={item.bannerUrl.replace(
+                    'http://localhost:3333',
+                    String(process.env.EXPO_PUBLIC_API_URL),
+                  )}
+                  expiresAt={item.expiresAt}
+                  isPremium={item.isPremium}
+                />
+              )}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    Nenhuma sorteio disponível.
+                  </Text>
+                </View>
+              )}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, gap: 16 }}
+            />
+          )}
         </View>
 
         <View style={styles.section}>
@@ -93,7 +106,7 @@ export function Market() {
                 navigation.navigate('stack', { screen: 'allBundles' })
               }
             >
-              <Text style={styles.seeAll}>Ver todos</Text>
+              <Text style={styles.seeAll}>Ver tudo</Text>
               <Material
                 name="chevron-right"
                 size={14}
@@ -102,27 +115,45 @@ export function Market() {
             </TouchableOpacity>
           </View>
 
-          <FlatList
-            data={PURCHASE_HISTORY}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <PurchasedItem
-                id={item.id}
-                title={item.title}
-                date={item.date}
-                amount={item.amount}
-                price={item.price}
-                type={item.type}
-              />
-            )}
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Nenhuma rifa disponível</Text>
-              </View>
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, gap: 16 }}
-          />
+          {isLoadingHistory || historyError ? (
+            <>
+              {historyError && (
+                <Text style={styles.error}>Falha ao buscar histórico.</Text>
+              )}
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 1, gap: 16 }}
+              >
+                <Skeleton style={{ width: '100%', height: 96 }} />
+                <Skeleton style={{ width: '100%', height: 96 }} />
+                <Skeleton style={{ width: '100%', height: 96 }} />
+              </ScrollView>
+            </>
+          ) : (
+            <FlatList
+              data={history?.raffles}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <PurchasedItem
+                  id={item.id}
+                  title={item.name}
+                  date={item.purchasedAt}
+                  amount={1}
+                  price={item.price}
+                  type="raffle"
+                />
+              )}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    Nenhuma compra encontrada
+                  </Text>
+                </View>
+              )}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, gap: 16 }}
+            />
+          )}
         </View>
       </View>
     </>

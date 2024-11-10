@@ -40,8 +40,8 @@ export function RaffleItem({
       style={styles.container}
       onPress={() =>
         navigation.navigate('stack', {
-          screen: 'workout',
-          params: { id, isFinished: false },
+          screen: 'raffle',
+          params: { id },
         })
       }
     >

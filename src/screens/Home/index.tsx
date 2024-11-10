@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native'
 
-import { getActiveChallenges } from '@/api/get-active-challenges'
+import { fetchActiveChallenges } from '@/api/fetch-active-challenges'
 import { getCustomerActiveBundle } from '@/api/get-customer-active-bundle'
 import { BundleItem } from '@/components/BundleItem'
 import { Button } from '@/components/Button'
@@ -40,7 +40,7 @@ export function Home() {
     error: challengesError,
   } = useQuery({
     queryKey: ['challenges'],
-    queryFn: getActiveChallenges,
+    queryFn: fetchActiveChallenges,
     refetchInterval: 1000 * 60 * 5, // 5 minutes
   })
 
