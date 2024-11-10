@@ -17,42 +17,56 @@ export const styles = StyleSheet.create({
 
   container: {
     flexGrow: 1,
-    paddingVertical: 32,
-    paddingHorizontal: 24,
+    position: 'relative',
 
     backgroundColor: themes.COLORS.GRAY_1,
   },
 
   banner: {
     width: '100%',
-    height: 208,
+    height: 160,
     borderRadius: 8,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-
-  tag: {
-    alignSelf: 'flex-start',
-    padding: 8,
-    borderRadius: 8,
-    flexDirection: 'row',
+    position: 'relative',
     alignItems: 'center',
-    gap: 8,
-
-    backgroundColor: themes.COLORS.WHITE,
   },
 
-  tagText: {
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+
+  codeContainer: {
+    marginTop: -120,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    gap: 12,
+  },
+
+  qrCode: {
+    width: 220,
+    height: 220,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: themes.COLORS.GREEN_6,
+  },
+
+  code: {
     fontFamily: themes.FONT_FAMILY.REGULAR,
-    fontSize: themes.FONT_SIZE.SM,
-    lineHeight: 18,
-    color: themes.COLORS.GRAY_12,
+    fontSize: themes.FONT_SIZE.MD,
+    color: themes.COLORS.GRAY_9,
+    textAlign: 'center',
   },
 
   content: {
     flex: 1,
-    width: '100%',
     paddingVertical: 32,
+    paddingHorizontal: 24,
+    width: '100%',
     gap: 16,
   },
 
@@ -83,13 +97,7 @@ export const styles = StyleSheet.create({
   price: {
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.XL,
-    color: themes.COLORS.BLUE_6,
-  },
-
-  remaining: {
-    fontFamily: themes.FONT_FAMILY.REGULAR,
-    fontSize: themes.FONT_SIZE.SM,
-    color: themes.COLORS.GRAY_9,
+    color: themes.COLORS.RED_3,
   },
 
   footer: {

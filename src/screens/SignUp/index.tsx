@@ -113,8 +113,13 @@ export function SignUp({ navigation }: SignUpProps) {
         >
           <Material name="arrow-back" size={24} color={themes.COLORS.GRAY_12} />
         </TouchableOpacity>
+      </View>
 
+      <View style={styles.hero}>
         <Text style={styles.title}>Criar conta</Text>
+        <Text style={styles.subtitle}>
+          Seja bem vindo! Para criar sua conta precisamos de alguns dados
+        </Text>
       </View>
 
       <KeyboardAwareScrollView
@@ -124,8 +129,7 @@ export function SignUp({ navigation }: SignUpProps) {
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
-            gap: 24,
-            justifyContent: 'space-between',
+            gap: 32,
           }}
         >
           <View style={styles.form}>
@@ -191,17 +195,28 @@ export function SignUp({ navigation }: SignUpProps) {
 
           <View style={styles.btnContainer}>
             <Button
-              title="Criar Conta"
+              title="Acessar"
               onPress={handleSubmit(handleSignUp)}
               disabled={shouldDisableButton}
               isLoading={isSubmitting}
             />
+
+            {/* <View style={styles.separator} />
+
             <Button
-              title="Já possuo cadastro"
-              variant="secondary"
-              onPress={() => navigation.navigate('sign-in')}
+              title="Continuar com Google"
+              variant="oauth"
               disabled={shouldDisableButton}
-            />
+              provider="google"
+              style={{}}
+            /> */}
+
+            <View style={styles.signIn}>
+              <Text style={styles.signInText}>Já possui cadastro? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('sign-in')}>
+                <Text style={styles.textHighlight}>Realize login</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAwareScrollView>

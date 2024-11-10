@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 import themes from '@/themes'
 
 interface ButtonStylesProps {
-  variant: 'primary' | 'secondary'
+  variant: 'primary' | 'secondary' | 'oauth'
   size: 'small' | 'medium'
 }
 
@@ -22,6 +22,7 @@ const sizes = {
 
 export const createStyles = ({ variant, size }: ButtonStylesProps) => {
   const isPrimary = variant === 'primary'
+  const isOAuth = variant === 'oauth'
 
   return StyleSheet.create({
     container: {
@@ -31,16 +32,24 @@ export const createStyles = ({ variant, size }: ButtonStylesProps) => {
       borderWidth: 2,
       borderRadius: 8,
       borderColor: isPrimary ? 'transparent' : themes.COLORS.GRAY_3,
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      gap: 8,
 
       backgroundColor: isPrimary ? themes.COLORS.GREEN_6 : 'transparent',
     },
 
     title: {
-      fontFamily: themes.FONT_FAMILY.MEDIUM,
+      fontFamily: isOAuth
+        ? themes.FONT_FAMILY.REGULAR
+        : themes.FONT_FAMILY.MEDIUM,
       fontSize: sizes[size].fontSize,
-      color: isPrimary ? themes.COLORS.WHITE : themes.COLORS.GREEN_6,
+      color: isPrimary
+        ? themes.COLORS.WHITE
+        : isOAuth
+          ? themes.COLORS.GRAY_12
+          : themes.COLORS.GREEN_6,
       textTransform: 'uppercase',
     },
   })

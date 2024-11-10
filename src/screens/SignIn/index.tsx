@@ -83,8 +83,13 @@ export function SignIn({ navigation }: SignInProps) {
         >
           <Material name="arrow-back" size={24} color={themes.COLORS.GRAY_12} />
         </TouchableOpacity>
+      </View>
 
+      <View style={styles.hero}>
         <Text style={styles.title}>Acessar conta</Text>
+        <Text style={styles.subtitle}>
+          Seja bem vindo de volta! Nós sentimos sua falta
+        </Text>
       </View>
 
       <KeyboardAwareScrollView
@@ -94,8 +99,7 @@ export function SignIn({ navigation }: SignInProps) {
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
-            gap: 24,
-            justifyContent: 'space-between',
+            gap: 32,
           }}
         >
           <View style={styles.form}>
@@ -137,12 +141,23 @@ export function SignIn({ navigation }: SignInProps) {
               disabled={shouldDisableButton}
               isLoading={isSubmitting}
             />
+
+            {/* <View style={styles.separator} />
+
             <Button
-              title="Não possuo cadastro"
-              variant="secondary"
-              onPress={() => navigation.navigate('sign-up')}
+              title="Continuar com Google"
+              variant="oauth"
               disabled={shouldDisableButton}
-            />
+              provider="google"
+              style={{}}
+            /> */}
+
+            <View style={styles.signUp}>
+              <Text style={styles.signUpText}>Não possui conta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('sign-up')}>
+                <Text style={styles.textHighlight}>Cadastre-se</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAwareScrollView>

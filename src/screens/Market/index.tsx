@@ -96,7 +96,7 @@ export function Market() {
           )}
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { flexGrow: 1 }]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.title}>Seu Histórico</Text>
 

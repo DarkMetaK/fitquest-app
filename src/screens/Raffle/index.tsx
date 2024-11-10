@@ -1,27 +1,25 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
-import {
-  FlatList,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { fetchActiveChallenges } from '@/api/fetch-active-challenges'
 import { getRaffle } from '@/api/get-raffle'
-import { BundleItem } from '@/components/BundleItem'
 import { Button } from '@/components/Button'
-import { Challenge } from '@/components/Challenge'
-import { Header } from '@/components/Header'
+import { Counter } from '@/components/Counter'
+import { Crystal } from '@/components/Icon'
 import { Skeleton } from '@/components/Skeleton'
-import { Walking } from '@/components/Walking'
 import themes from '@/themes'
 
 import { styles } from './styles'
 
-export function Home() {
+export function Raffle() {
+  const [amount, setAmount] = useState(0)
+
+  const insets = useSafeAreaInsets()
   const navigation = useNavigation()
   const route = useRoute()
 
@@ -37,103 +35,145 @@ export function Home() {
     staleTime: 1000 * 60 * 60 * 24, // 1 day
   })
 
+  function handleShowDrawInfo() {
+    Dialog.show({
+      type: ALERT_TYPE.PRIMARY,
+      showIndicator: false,
+      title: 'Data do sorteio',
+      textBody: `O sorteio será realizado no dia ${dayjs(raffle?.raffle.expiresAt).format('DD/MM/YYYY')}.`,
+      button: 'Fechar',
+    })
+  }
+
+  function handleShowPremiumInfo() {
+    Dialog.show({
+      type: ALERT_TYPE.WARNING,
+      showIndicator: false,
+      title: 'Exclusivo para premium',
+      textBody: 'Este sorteio é exclusivo para usuários premium.',
+      button: 'Fechar',
+    })
+  }
+
+  function handleShowQuotaInfo() {
+    Dialog.show({
+      type: ALERT_TYPE.WARNING,
+      showIndicator: false,
+      title: 'Limite conta gratuita',
+      textBody: 'Assine o plano premium para ter acesso a cupons ilimitados.',
+      button: 'Fechar',
+    })
+  }
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.title}>Plano Atual</Text>
+    <>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Material name="arrow-back" size={24} color={themes.COLORS.GRAY_12} />
+        </TouchableOpacity>
+      </View>
 
-          <TouchableOpacity
-            style={styles.seeAllContainer}
-            onPress={() =>
-              navigation.navigate('stack', { screen: 'allBundles' })
-            }
-          >
-            <Text style={styles.seeAll}>Ver todos</Text>
-            <Material
-              name="chevron-right"
-              size={14}
-              color={themes.COLORS.GREEN_8}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {isLoadingBundle || activeBundleError ? (
+      <ScrollView contentContainerStyle={styles.container}>
+        {isLoading ? (
           <Skeleton style={{ width: '100%', height: 208 }} />
-        ) : activeBundle?.activeBundle ? (
-          <BundleItem
-            bannerUrl={activeBundle.activeBundle.bannerUrl.replace(
-              'http://localhost:3333',
-              String(process.env.EXPO_PUBLIC_API_URL),
-            )}
-            levelsAmount={activeBundle.activeBundle.workouts.length}
-            completedLevels={
-              activeBundle.activeBundle.finishedWorkoutsIds.length
-            }
-            title={activeBundle.activeBundle.name}
-          />
         ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhum plano ativo</Text>
-            <Button title="Escolher plano" />
-          </View>
+          <Image
+            source={{
+              uri: raffle?.raffle.bannerUrl.replace(
+                'http://localhost:3333',
+                String(process.env.EXPO_PUBLIC_API_URL),
+              ),
+            }}
+            style={styles.banner}
+            alt=""
+            resizeMode="cover"
+          />
         )}
-      </View>
 
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.title}>Desafios Diários</Text>
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.tag} onPress={handleShowDrawInfo}>
+            <Material
+              name="calendar-month"
+              size={24}
+              color={themes.COLORS.GREEN_6}
+            />
+
+            {isLoading ? (
+              <Skeleton style={{ maxWidth: 24, height: 16 }} />
+            ) : (
+              <Text style={styles.tagText}>
+                {dayjs(raffle?.raffle.expiresAt).format('DD/MM/YYYY')}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          {raffle?.raffle.isPremium && (
+            <TouchableOpacity
+              style={[
+                styles.tag,
+                {
+                  backgroundColor: themes.COLORS.YELLOW_8,
+                  alignSelf: 'stretch',
+                },
+              ]}
+              onPress={handleShowPremiumInfo}
+            >
+              <Text style={[styles.tagText, { color: themes.COLORS.WHITE }]}>
+                Premium
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {isLoadingChallenges || challengesError ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, gap: 20 }}
-          >
-            <Skeleton style={{ width: 230, height: 120 }} />
-            <Skeleton style={{ width: 230, height: 120 }} />
-          </ScrollView>
-        ) : (
-          <FlatList
-            data={availableChallenges?.challenges}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Challenge
-                id={item.id}
-                title={item.name}
-                bannerUrl={item.bannerUrl.replace(
-                  'http://localhost:3333',
-                  String(process.env.EXPO_PUBLIC_API_URL),
-                )}
-                exercisesAmount={item.stepsAmount}
-                availableCurrency={item.availableCurrency}
-                premiumCurrency={item.availableCurrency * 1.5}
-                isFinished={false}
+        <View style={styles.content}>
+          {isLoading ? (
+            <Skeleton style={{ height: 20 }} />
+          ) : (
+            <Text style={styles.title}>{raffle?.raffle.name}</Text>
+          )}
+
+          {isLoading ? (
+            <Skeleton style={{ height: 40 }} />
+          ) : (
+            <Text style={styles.description}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+              aliquet, quam ac ultricies malesuada, nunc orci fermentum dolor,
+              nec ultrices orci nisl at turpis.
+            </Text>
+          )}
+
+          <View style={styles.priceContainer}>
+            <View style={styles.row}>
+              <Crystal size={20} color={themes.COLORS.BLUE_6} />
+              {isLoading ? (
+                <Skeleton style={{ maxWidth: 24, height: 20 }} />
+              ) : (
+                <Text style={styles.price}>{raffle?.raffle.price}</Text>
+              )}
+            </View>
+
+            <TouchableOpacity style={styles.row} onPress={handleShowQuotaInfo}>
+              <Text style={styles.remaining}>3 cupons disponíveis</Text>
+              <Material
+                name="question-mark"
+                size={12}
+                color={themes.COLORS.GRAY_9}
               />
-            )}
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Nenhum desafio disponível</Text>
-              </View>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, gap: 20 }}
-          />
-        )}
-
-        <View style={styles.walking}>
-          <Walking
-            availableCurrency={20}
-            premiumCurrency={10}
-            stepsGoal={6000}
-          />
+            </TouchableOpacity>
+          </View>
         </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <Counter
+          value={amount}
+          onIncrement={() => setAmount(amount + 1)}
+          onDecrement={() => setAmount(amount - 1)}
+          max={3}
+        />
+
+        <Button title="Trocar" style={{ width: '50%' }} />
       </View>
-    </ScrollView>
+    </>
   )
 }

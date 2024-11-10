@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
   },
 
   section: {
-    flex: 1,
     width: '100%',
     gap: 12,
   },

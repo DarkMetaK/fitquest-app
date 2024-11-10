@@ -5,13 +5,16 @@ import {
   TouchableOpacityProps,
 } from 'react-native'
 
+import GoogleSvg from '@/assets/google.svg'
+
 import { createStyles } from './styles'
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'oauth'
   size?: 'small' | 'medium'
   isLoading?: boolean
+  provider?: 'google'
 }
 
 export function Button({
@@ -20,6 +23,7 @@ export function Button({
   size = 'medium',
   isLoading = false,
   style: customStyle,
+  provider,
   ...rest
 }: ButtonProps) {
   const styles = createStyles({ variant, size })
@@ -29,7 +33,10 @@ export function Button({
       {isLoading ? (
         <ActivityIndicator size={24} />
       ) : (
-        <Text style={styles.title}>{title}</Text>
+        <>
+          {provider && <GoogleSvg width={24} height={24} />}
+          <Text style={styles.title}>{title}</Text>
+        </>
       )}
     </TouchableOpacity>
   )
