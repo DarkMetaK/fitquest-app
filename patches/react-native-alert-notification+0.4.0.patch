@@ -1,3 +1,17 @@
+diff --git a/node_modules/react-native-alert-notification/lib/typescript/config/ENV.d.ts b/node_modules/react-native-alert-notification/lib/typescript/config/ENV.d.ts
+index e8167a6..49a8050 100644
+--- a/node_modules/react-native-alert-notification/lib/typescript/config/ENV.d.ts
++++ b/node_modules/react-native-alert-notification/lib/typescript/config/ENV.d.ts
+@@ -6,7 +6,8 @@ declare enum ALERT_TYPE {
+     SUCCESS = "SUCCESS",
+     DANGER = "DANGER",
+     WARNING = "WARNING",
+-    INFO = "INFO"
++    INFO = "INFO",
++    PRIMARY = "PRIMARY"
+ }
+ declare enum TOAST_POSITION {
+     TOP = "TOP",
 diff --git a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts b/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
 index f605fed..47efc9d 100644
 --- a/node_modules/react-native-alert-notification/lib/typescript/containers/Dialog.d.ts
@@ -13,8 +27,32 @@ index f605fed..47efc9d 100644
      onShow?: () => void;
      onHide?: () => void;
  };
+diff --git a/node_modules/react-native-alert-notification/src/config/ENV.ts b/node_modules/react-native-alert-notification/src/config/ENV.ts
+index c2784be..774fda9 100644
+--- a/node_modules/react-native-alert-notification/src/config/ENV.ts
++++ b/node_modules/react-native-alert-notification/src/config/ENV.ts
+@@ -14,6 +14,7 @@ enum ALERT_TYPE {
+   DANGER = 'DANGER',
+   WARNING = 'WARNING',
+   INFO = 'INFO',
++  PRIMARY = 'PRIMARY',
+ }
+ 
+ enum TOAST_POSITION {
+@@ -63,6 +64,11 @@ const ENV = {
+       android: ['@android:color/holo_blue_light', '@android:color/holo_blue_dark'],
+       default: ['rgb(80,122,189)', 'rgb(80,122,190)'],
+     },
++    primary: {
++      ios: 'systemGreen',
++      android: ['@android:color/holo_green_light', '@android:color/holo_green_dark'],
++      default: ['rgb(3, 124, 84)', 'rgb(3, 124, 84)'],
++    },
+   },
+ };
+ 
 diff --git a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
-index a6afe15..51eb9d0 100644
+index a6afe15..c2828c5 100644
 --- a/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
 +++ b/node_modules/react-native-alert-notification/src/containers/Dialog.tsx
 @@ -8,9 +8,13 @@ export type IConfigDialog = {
@@ -82,12 +120,13 @@ index a6afe15..51eb9d0 100644
      } = this.state;
      const { _buttonRender } = this;
      return (
-@@ -222,8 +243,13 @@ export class Dialog extends React.Component<IProps, IState> {
+@@ -222,9 +243,14 @@ export class Dialog extends React.Component<IProps, IState> {
          }) => (this._popupHeight = height)}
          style={StyleSheet.flatten([styles.cardContainer, { transform: [{ translateY: this._positionDialog }] }])}
        >
 -        <View style={styles.backendImage} />
 -        <Image source={getImage(type)} resizeMode="contain" style={StyleSheet.flatten([styles.image, styles[`${type}Image`]])} />
+-        <View style={styles.cardBody}>
 +        {showIndicator &&
 +        <>
 +         <View style={styles.backendImage} />
@@ -95,10 +134,28 @@ index a6afe15..51eb9d0 100644
 +          <Image source={getImage(type)} resizeMode="contain" style={StyleSheet.flatten([styles.image, styles[`${type}Image`]])} />
 +        </>
 +        }
-         <View style={styles.cardBody}>
++        <View style={[styles.cardBody, showIndicator && { marginTop: 16 }]}>
            {title && <Text style={styles.titleLabel}>{title}</Text>}
            {textBody && <Text style={styles.descLabel}>{textBody}</Text>}
-@@ -287,6 +313,10 @@ const __styles = (isDark: boolean) =>
+         </View>
+@@ -261,7 +287,7 @@ const __styles = (isDark: boolean) =>
+       alignSelf: 'center',
+       maxWidth: 400,
+       width: '80%',
+-      minHeight: 250,
++      gap: 16,
+       borderRadius: 24,
+       paddingHorizontal: 12,
+       paddingTop: 50,
+@@ -272,6 +298,7 @@ const __styles = (isDark: boolean) =>
+ 
+     cardBody: {
+       flex: 1,
++      gap: 12,
+       justifyContent: 'space-evenly',
+       alignItems: 'center',
+       overflow: 'hidden',
+@@ -287,6 +314,10 @@ const __styles = (isDark: boolean) =>
        textAlign: 'center',
        color: Color.get('label', isDark),
      },
@@ -109,3 +166,69 @@ index a6afe15..51eb9d0 100644
      button: {
        borderRadius: 50,
        height: 40,
+@@ -313,6 +344,9 @@ const __styles = (isDark: boolean) =>
+     [ALERT_TYPE.INFO]: {
+       backgroundColor: Color.get('info', isDark),
+     },
++    [ALERT_TYPE.PRIMARY]: {
++      backgroundColor: Color.get('primary', isDark),
++    },
+     backendImage: {
+       position: 'absolute',
+       alignSelf: 'center',
+@@ -343,4 +377,7 @@ const __styles = (isDark: boolean) =>
+     [`${ALERT_TYPE.INFO}Image`]: {
+       tintColor: Color.get('info', isDark),
+     },
++    [`${ALERT_TYPE.PRIMARY}Image`]: {
++      tintColor: Color.get('primary', isDark),
++    },
+   });
+diff --git a/node_modules/react-native-alert-notification/src/containers/Toast.tsx b/node_modules/react-native-alert-notification/src/containers/Toast.tsx
+index 7c267b4..08aef9a 100644
+--- a/node_modules/react-native-alert-notification/src/containers/Toast.tsx
++++ b/node_modules/react-native-alert-notification/src/containers/Toast.tsx
+@@ -8,7 +8,6 @@ import { ToastRender } from './ToastRender';
+ 
+ export type IConfigToast = {
+   autoClose?: number | boolean;
+-
+   type?: ALERT_TYPE;
+   title?: string;
+   textBody?: string;
+diff --git a/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx b/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
+index a37d838..67d3d15 100644
+--- a/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
++++ b/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
+@@ -220,4 +220,7 @@ const __styles = (isDark: boolean) =>
+     [`${ALERT_TYPE.INFO}Image`]: {
+       tintColor: Color.get('info', isDark),
+     },
++    [`${ALERT_TYPE.PRIMARY}Image`]: {
++      tintColor: Color.get('primary', isDark),
++    },
+   });
+diff --git a/node_modules/react-native-alert-notification/src/service/color.ts b/node_modules/react-native-alert-notification/src/service/color.ts
+index e78747a..ba08d45 100644
+--- a/node_modules/react-native-alert-notification/src/service/color.ts
++++ b/node_modules/react-native-alert-notification/src/service/color.ts
+@@ -10,6 +10,7 @@ export type IColors = {
+   danger: string;
+   warning: string;
+   info: string;
++  primary: string;
+ };
+ 
+ export class Color {
+diff --git a/node_modules/react-native-alert-notification/src/service/image.ts b/node_modules/react-native-alert-notification/src/service/image.ts
+index aa436d3..33f4023 100644
+--- a/node_modules/react-native-alert-notification/src/service/image.ts
++++ b/node_modules/react-native-alert-notification/src/service/image.ts
+@@ -12,5 +12,7 @@ export const getImage = (type: IConfigDialog['type']): ImageRequireSource => {
+       return require('../assets/danger.png');
+     case ALERT_TYPE.INFO:
+       return require('../assets/info.png');
++    case ALERT_TYPE.PRIMARY:
++      return require('../assets/success.png');
+   }
+ };
