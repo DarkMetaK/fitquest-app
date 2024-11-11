@@ -4,6 +4,7 @@ interface FetchAvailableRafflesResponse {
   raffles: {
     id: string
     name: string
+    description: string
     bannerUrl: string
     price: number
     isPremium: boolean

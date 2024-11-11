@@ -1,6 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { Image } from 'expo-image'
 import { useEffect, useRef, useState } from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useWorkout } from '@/hooks/useWorkout'
@@ -102,7 +103,12 @@ export function ActiveExercise({
       <View style={styles.content}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: demonstrationUrl }}
+            source={{
+              uri: demonstrationUrl.replace(
+                'http://localhost:3333',
+                String(process.env.EXPO_PUBLIC_API_URL),
+              ),
+            }}
             style={styles.demonstration}
             alt=""
           />

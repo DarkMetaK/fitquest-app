@@ -53,7 +53,7 @@ export function Exercise() {
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.headerText}>
-          Exercise {totalCompletedExercises}/{totalExercises}
+          Exercício {totalCompletedExercises}/{totalExercises}
         </Text>
         <ProgressBar
           totalSteps={totalExercises}

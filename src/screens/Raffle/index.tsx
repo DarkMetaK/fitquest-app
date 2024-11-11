@@ -135,11 +135,7 @@ export function Raffle() {
           {isLoading ? (
             <Skeleton style={{ height: 40 }} />
           ) : (
-            <Text style={styles.description}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-              aliquet, quam ac ultricies malesuada, nunc orci fermentum dolor,
-              nec ultrices orci nisl at turpis.
-            </Text>
+            <Text style={styles.description}>{raffle?.raffle.description}</Text>
           )}
 
           <View style={styles.priceContainer}>

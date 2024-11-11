@@ -1,5 +1,6 @@
+import { Image } from 'expo-image'
 import { useEffect, useRef, useState } from 'react'
-import { Image, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Button } from '@/components/Button'
@@ -9,7 +10,7 @@ import { convertSecondsToTime } from '@/utils/time-converter'
 import { styles } from './styles'
 
 export function Interval() {
-  const { finishInterval, intervalDuration } = useWorkout()
+  const { finishInterval, intervalDuration, currentExercise } = useWorkout()
 
   const [remainingTime, setRemainingTime] = useState(intervalDuration!)
   const timer = useRef<NodeJS.Timeout>()
@@ -48,16 +49,19 @@ export function Interval() {
       <View style={styles.content}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/150' }}
+            source={{
+              uri: currentExercise?.demonstrationUrl.replace(
+                'http://localhost:3333',
+                String(process.env.EXPO_PUBLIC_API_URL),
+              ),
+            }}
             style={styles.demonstration}
             alt=""
           />
 
           <View>
             <Text style={styles.nextTitle}>Próximo</Text>
-            <Text style={styles.nextExercise}>
-              Postura do gato e da vaca sentada
-            </Text>
+            <Text style={styles.nextExercise}>{currentExercise?.name}</Text>
           </View>
         </View>
 

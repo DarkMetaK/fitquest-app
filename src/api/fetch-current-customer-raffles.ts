@@ -6,6 +6,7 @@ interface FetchCurrentCustomerRafflesResponse {
     raffleId: string
     hasWon: boolean | null
     name: string
+    description: string
     bannerUrl: string
     price: number
     isPremium: boolean
