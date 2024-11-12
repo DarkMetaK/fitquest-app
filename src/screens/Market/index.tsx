@@ -1,13 +1,5 @@
-import Material from '@expo/vector-icons/MaterialIcons'
-import { useNavigation } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
-import {
-  FlatList,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { FlatList, ScrollView, Text, View } from 'react-native'
 
 import { fetchAvailableRaffles } from '@/api/fetch-available-raffles'
 import { fetchCurrentCustomerRaffles } from '@/api/fetch-current-customer-raffles'
@@ -15,13 +7,10 @@ import { Header } from '@/components/Header'
 import { PurchasedItem } from '@/components/PurchasedItem'
 import { RaffleItem } from '@/components/RaffleItem'
 import { Skeleton } from '@/components/Skeleton'
-import themes from '@/themes'
 
 import { styles } from './styles'
 
 export function Market() {
-  const navigation = useNavigation()
-
   const {
     data: raffles,
     isLoading: isLoadingRaffles,
@@ -98,20 +87,6 @@ export function Market() {
         <View style={[styles.section, styles.topDivider, { flexGrow: 1 }]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.title}>Seu Histórico</Text>
-
-            <TouchableOpacity
-              style={styles.seeAllContainer}
-              onPress={() =>
-                navigation.navigate('stack', { screen: 'allBundles' })
-              }
-            >
-              <Text style={styles.seeAll}>Ver tudo</Text>
-              <Material
-                name="chevron-right"
-                size={14}
-                color={themes.COLORS.GREEN_8}
-              />
-            </TouchableOpacity>
           </View>
 
           <View style={{ flex: 1 }}>
@@ -131,7 +106,7 @@ export function Market() {
               </>
             ) : (
               <FlatList
-                data={history?.tickets.splice(0, 5)}
+                data={history?.tickets}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                   <PurchasedItem

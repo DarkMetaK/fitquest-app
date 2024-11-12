@@ -1,6 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
+import { useNavigation } from '@react-navigation/native'
 import dayjs from 'dayjs'
-import { Text, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 
 import themes from '@/themes'
 
@@ -11,29 +12,19 @@ interface PurchasedItemProps {
   title: string
   date: Date
   price: number
-  amount: number
-  type?: string
 }
 
-export function PurchasedItem({
-  title,
-  date,
-  price,
-  amount,
-  type,
-}: PurchasedItemProps) {
-  const formattedTitle =
-    type === 'raffle'
-      ? `${amount} número(s) na rifa "${title}"`
-      : type === 'discount'
-        ? `${amount} cupom(ns) de desconto "${title}"`
-        : title
-
-  const totalPrice = price * amount
+export function PurchasedItem({ id, title, date, price }: PurchasedItemProps) {
+  const navigation = useNavigation()
 
   return (
-    <View style={styles.container}>
-      <Text numberOfLines={1}>{formattedTitle}</Text>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('stack', { screen: 'receipt', params: { id } })
+      }
+      style={styles.container}
+    >
+      <Text numberOfLines={1}>Cupom sorteio &quot;{title}&quot;</Text>
 
       <View style={styles.footer}>
         <View style={styles.row}>
@@ -49,10 +40,10 @@ export function PurchasedItem({
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.priceText}>-{totalPrice}</Text>
+          <Text style={styles.priceText}>-{price}</Text>
           <Crystal size={16} color={themes.COLORS.RED_3} />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }

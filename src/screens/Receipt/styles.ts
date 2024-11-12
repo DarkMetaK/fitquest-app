@@ -48,11 +48,13 @@ export const styles = StyleSheet.create({
   },
 
   qrCode: {
-    width: 220,
-    height: 220,
+    padding: 6,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: themes.COLORS.GREEN_6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: themes.COLORS.WHITE,
   },
 
   code: {
