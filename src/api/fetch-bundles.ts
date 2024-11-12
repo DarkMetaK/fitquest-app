@@ -1,22 +1,9 @@
 import { api } from '@/libs/axios'
 
-interface Workout {
-  id: string
-  name: string
-  availableExperience: number
-  availableCurrency: number
-  stepsAmount: number
-}
+import { BundleDTO } from './dtos/bundleDTO'
 
 export interface FetchBundlesResponse {
-  bundles: {
-    id: string
-    name: string
-    description?: string | null
-    bannerUrl: string
-    isPremium: boolean
-    workouts: Workout[]
-  }[]
+  bundles: BundleDTO[]
 }
 
 export async function fetchBundles(): Promise<FetchBundlesResponse> {

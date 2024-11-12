@@ -1,18 +1,8 @@
 import { api } from '@/libs/axios'
 
-export interface CustomerActiveBundle {
-  id: string
-  name: string
-  description?: string | null
-  bannerUrl: string
-  isPremium: boolean
-  workouts: {
-    id: string
-    name: string
-    availableExperience: number
-    availableCurrency: number
-    stepsAmount: number
-  }[]
+import { BundleDTO } from './dtos/bundleDTO'
+
+export interface CustomerActiveBundle extends BundleDTO {
   finishedWorkoutsIds: string[]
 }
 

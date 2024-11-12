@@ -1,16 +1,9 @@
 import { api } from '@/libs/axios'
 
+import { ChallengeDTO } from './dtos/challengeDTO'
+
 interface FetchActiveChallengesResponse {
-  challenges: {
-    id: string
-    name: string
-    availableExperience: number
-    availableCurrency: number
-    bannerUrl: string
-    type: 'CHALLENGE'
-    stepsAmount: number
-    expiresAt: Date
-  }[]
+  challenges: ChallengeDTO[]
 }
 
 export async function fetchActiveChallenges(): Promise<FetchActiveChallengesResponse> {

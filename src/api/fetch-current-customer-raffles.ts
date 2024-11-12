@@ -1,23 +1,26 @@
 import { api } from '@/libs/axios'
 
-interface FetchCurrentCustomerRafflesResponse {
-  raffles: {
-    id: string
-    raffleId: string
-    hasWon: boolean | null
-    name: string
-    description: string
-    bannerUrl: string
-    price: number
-    isPremium: boolean
-    expiresAt: Date
-    purchasedAt: Date
-  }[]
+import { TicketDTO } from './dtos/ticketDTO'
+
+interface FetchCurrentCustomerRafflesRequest {
+  raffleId?: string
 }
 
-export async function fetchCurrentCustomerRaffles(): Promise<FetchCurrentCustomerRafflesResponse> {
-  const response =
-    await api.get<FetchCurrentCustomerRafflesResponse>('/raffles/customer')
+export interface FetchCurrentCustomerRafflesResponse {
+  tickets: TicketDTO[]
+}
+
+export async function fetchCurrentCustomerRaffles({
+  raffleId,
+}: FetchCurrentCustomerRafflesRequest): Promise<FetchCurrentCustomerRafflesResponse> {
+  const response = await api.get<FetchCurrentCustomerRafflesResponse>(
+    '/raffles/customer',
+    {
+      params: {
+        raffleId,
+      },
+    },
+  )
 
   return response.data
 }

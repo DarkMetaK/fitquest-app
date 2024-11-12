@@ -38,8 +38,7 @@ export function Market() {
     error: historyError,
   } = useQuery({
     queryKey: ['raffles-history'],
-    queryFn: fetchCurrentCustomerRaffles,
-    staleTime: Infinity,
+    queryFn: () => fetchCurrentCustomerRaffles({}),
   })
 
   return (
@@ -115,45 +114,47 @@ export function Market() {
             </TouchableOpacity>
           </View>
 
-          {isLoadingHistory || historyError ? (
-            <>
-              {historyError && (
-                <Text style={styles.error}>Falha ao buscar histórico.</Text>
-              )}
-              <ScrollView
+          <View style={{ flex: 1 }}>
+            {isLoadingHistory || historyError ? (
+              <>
+                {historyError && (
+                  <Text style={styles.error}>Falha ao buscar histórico.</Text>
+                )}
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ flexGrow: 1, gap: 16 }}
+                >
+                  <Skeleton style={{ width: '100%', height: 96 }} />
+                  <Skeleton style={{ width: '100%', height: 96 }} />
+                  <Skeleton style={{ width: '100%', height: 96 }} />
+                </ScrollView>
+              </>
+            ) : (
+              <FlatList
+                data={history?.tickets.splice(0, 5)}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <PurchasedItem
+                    id={item.id}
+                    title={item.name}
+                    date={item.purchasedAt}
+                    amount={1}
+                    price={item.price}
+                    type="raffle"
+                  />
+                )}
+                ListEmptyComponent={() => (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>
+                      Nenhuma compra encontrada
+                    </Text>
+                  </View>
+                )}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1, gap: 16 }}
-              >
-                <Skeleton style={{ width: '100%', height: 96 }} />
-                <Skeleton style={{ width: '100%', height: 96 }} />
-                <Skeleton style={{ width: '100%', height: 96 }} />
-              </ScrollView>
-            </>
-          ) : (
-            <FlatList
-              data={history?.raffles}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <PurchasedItem
-                  id={item.id}
-                  title={item.name}
-                  date={item.purchasedAt}
-                  amount={1}
-                  price={item.price}
-                  type="raffle"
-                />
-              )}
-              ListEmptyComponent={() => (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>
-                    Nenhuma compra encontrada
-                  </Text>
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1, gap: 16 }}
-            />
-          )}
+              />
+            )}
+          </View>
         </View>
       </View>
     </>

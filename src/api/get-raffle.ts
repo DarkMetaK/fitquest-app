@@ -1,20 +1,13 @@
 import { api } from '@/libs/axios'
 
+import { RaffleDTO } from './dtos/raffleDTO'
+
 interface GetRaffleRequest {
   raffleId: string
 }
 
 interface GetRaffleResponse {
-  raffle: {
-    id: string
-    name: string
-    description: string
-    bannerUrl: string
-    price: number
-    isPremium: boolean
-    expiresAt: Date
-    createdAt: Date
-  }
+  raffle: RaffleDTO
 }
 
 export async function getRaffle({

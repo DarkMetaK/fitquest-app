@@ -1,18 +1,29 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { TicketDTO } from '@/api/dtos/ticketDTO'
+import {
+  fetchCurrentCustomerRaffles,
+  FetchCurrentCustomerRafflesResponse,
+} from '@/api/fetch-current-customer-raffles'
+import {
+  getCustomerDetails,
+  GetCustomerDetailsResponse,
+} from '@/api/get-customer-details'
 import { getRaffle } from '@/api/get-raffle'
+import { purchaseRaffleTickets } from '@/api/purchase-raffle-tickets'
 import { Button } from '@/components/Button'
 import { Counter } from '@/components/Counter'
 import { Crystal } from '@/components/Icon'
 import { Skeleton } from '@/components/Skeleton'
 import themes from '@/themes'
+import { AppError } from '@/utils/AppError'
 
 import { styles } from './styles'
 
@@ -22,18 +33,119 @@ export function Raffle() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation()
   const route = useRoute()
+  const queryClient = useQueryClient()
 
   const params = route.params as { id: string }
 
   const {
     data: raffle,
-    isLoading,
-    error,
+    isLoading: isLoadingRaffle,
+    error: raffleError,
   } = useQuery({
     queryKey: ['raffle', params.id],
     queryFn: () => getRaffle({ raffleId: params.id }),
     staleTime: 1000 * 60 * 60 * 24, // 1 day
   })
+
+  const {
+    data: adquiredRaffles,
+    isLoading: isLoadingAdquiredRaffles,
+    error: adquiredRafflesError,
+  } = useQuery({
+    queryKey: ['raffles-history', params.id],
+    queryFn: () =>
+      fetchCurrentCustomerRaffles({
+        raffleId: params.id,
+      }),
+    staleTime: Infinity,
+  })
+
+  const { data: customer, isLoading: isFetchingCustomer } = useQuery({
+    queryKey: ['metadata'],
+    queryFn: getCustomerDetails,
+    staleTime: Infinity,
+  })
+
+  const { mutateAsync: purchaseRaffleFn, isPending: isSubmitting } =
+    useMutation({
+      mutationFn: purchaseRaffleTickets,
+      onSuccess: async ({ tickets }) => {
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Sucesso',
+          textBody: 'Cupons adquiridos com sucesso. Boa sorte!',
+          button: 'Fechar',
+        })
+
+        await updateCache(tickets)
+      },
+      onError(error) {
+        const isAppError = error instanceof AppError
+
+        const title = isAppError
+          ? error.message
+          : 'Erro no servidor, tente novamente mais tarde.'
+
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Erro',
+          textBody: title,
+          button: 'Fechar',
+        })
+
+        console.log(error)
+      },
+    })
+
+  async function updateCache(newTickets: TicketDTO[]) {
+    queryClient.invalidateQueries({ queryKey: ['raffles-history', 'metadata'] })
+
+    const cachedAdquiredTickets =
+      queryClient.getQueryData<FetchCurrentCustomerRafflesResponse>([
+        'raffles-history',
+        params.id,
+      ])
+
+    if (cachedAdquiredTickets) {
+      console.log(cachedAdquiredTickets)
+
+      queryClient.setQueryData<FetchCurrentCustomerRafflesResponse>(
+        ['raffles-history', params.id],
+        {
+          tickets: [...newTickets, ...cachedAdquiredTickets.tickets],
+        },
+      )
+    }
+
+    const cachedTickets =
+      queryClient.getQueryData<FetchCurrentCustomerRafflesResponse>([
+        'raffles-history',
+      ])
+
+    if (cachedTickets) {
+      queryClient.setQueryData<FetchCurrentCustomerRafflesResponse>(
+        ['raffles-history'],
+        {
+          tickets: [...newTickets, ...cachedTickets.tickets],
+        },
+      )
+    }
+
+    const cachedMetadata = queryClient.getQueryData<GetCustomerDetailsResponse>(
+      ['metadata'],
+    )
+
+    if (cachedMetadata) {
+      queryClient.setQueryData<GetCustomerDetailsResponse>(['metadata'], {
+        customer: {
+          ...cachedMetadata.customer,
+          currencyAmount:
+            cachedMetadata.customer.currencyAmount -
+            amount * raffle!.raffle.price,
+        },
+      })
+    }
+  }
 
   function handleShowDrawInfo() {
     Dialog.show({
@@ -65,6 +177,28 @@ export function Raffle() {
     })
   }
 
+  const userIsPremium =
+    customer?.customer.premiumExpiresAt &&
+    dayjs().isBefore(dayjs(customer?.customer.premiumExpiresAt))
+
+  const allowedToPurchase = !raffle?.raffle.isPremium || userIsPremium
+
+  const disableButton =
+    isLoadingRaffle ||
+    isLoadingAdquiredRaffles ||
+    isFetchingCustomer ||
+    isSubmitting ||
+    !allowedToPurchase ||
+    !!raffleError ||
+    !!adquiredRafflesError ||
+    amount === 0
+
+  const AVAILABLE_QUOTA =
+    raffle?.raffle.isPremium || userIsPremium
+      ? 99
+      : (raffle?.raffle.freeTierQuota || 0) -
+        (adquiredRaffles?.tickets.length || 0)
+
   return (
     <>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
@@ -74,7 +208,7 @@ export function Raffle() {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        {isLoading ? (
+        {isLoadingRaffle ? (
           <Skeleton style={{ width: '100%', height: 208 }} />
         ) : (
           <Image
@@ -98,7 +232,7 @@ export function Raffle() {
               color={themes.COLORS.GREEN_6}
             />
 
-            {isLoading ? (
+            {isLoadingRaffle ? (
               <Skeleton style={{ maxWidth: 24, height: 16 }} />
             ) : (
               <Text style={styles.tagText}>
@@ -126,13 +260,13 @@ export function Raffle() {
         </View>
 
         <View style={styles.content}>
-          {isLoading ? (
+          {isLoadingRaffle ? (
             <Skeleton style={{ height: 20 }} />
           ) : (
             <Text style={styles.title}>{raffle?.raffle.name}</Text>
           )}
 
-          {isLoading ? (
+          {isLoadingRaffle ? (
             <Skeleton style={{ height: 40 }} />
           ) : (
             <Text style={styles.description}>{raffle?.raffle.description}</Text>
@@ -141,21 +275,28 @@ export function Raffle() {
           <View style={styles.priceContainer}>
             <View style={styles.row}>
               <Crystal size={20} color={themes.COLORS.BLUE_6} />
-              {isLoading ? (
+              {isLoadingRaffle ? (
                 <Skeleton style={{ maxWidth: 24, height: 20 }} />
               ) : (
                 <Text style={styles.price}>{raffle?.raffle.price}</Text>
               )}
             </View>
 
-            <TouchableOpacity style={styles.row} onPress={handleShowQuotaInfo}>
-              <Text style={styles.remaining}>3 cupons disponíveis</Text>
-              <Material
-                name="question-mark"
-                size={12}
-                color={themes.COLORS.GRAY_9}
-              />
-            </TouchableOpacity>
+            {(!raffle?.raffle.isPremium || userIsPremium) && (
+              <TouchableOpacity
+                style={styles.row}
+                onPress={handleShowQuotaInfo}
+              >
+                <Text style={styles.remaining}>
+                  {AVAILABLE_QUOTA} cupons disponíveis
+                </Text>
+                <Material
+                  name="question-mark"
+                  size={12}
+                  color={themes.COLORS.GRAY_9}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -165,10 +306,18 @@ export function Raffle() {
           value={amount}
           onIncrement={() => setAmount(amount + 1)}
           onDecrement={() => setAmount(amount - 1)}
-          max={3}
+          max={AVAILABLE_QUOTA}
         />
 
-        <Button title="Trocar" style={{ width: '50%' }} />
+        <Button
+          title={allowedToPurchase ? 'Comprar' : 'Premium'}
+          style={{ width: '50%', opacity: disableButton ? 0.5 : 1 }}
+          onPress={async () =>
+            await purchaseRaffleFn({ raffleId: params.id, amount })
+          }
+          disabled={disableButton}
+          isLoading={isSubmitting}
+        />
       </View>
     </>
   )
