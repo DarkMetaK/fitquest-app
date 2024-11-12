@@ -158,7 +158,7 @@ export function Metrics() {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, styles.topDivider]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.title}>Sequências de treino</Text>
           </View>

@@ -93,7 +93,7 @@ export function Home() {
           )}
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, styles.topDivider]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.title}>Desafios Diários</Text>
           </View>

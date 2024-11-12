@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     paddingVertical: 32,
     paddingHorizontal: 24,
-    gap: 32,
+    gap: 16,
 
     backgroundColor: themes.COLORS.GRAY_1,
   },
@@ -15,6 +15,12 @@ export const styles = StyleSheet.create({
   section: {
     width: '100%',
     gap: 12,
+  },
+
+  topDivider: {
+    paddingTop: 16,
+    borderTopWidth: 2,
+    borderColor: themes.COLORS.GRAY_2,
   },
 
   sectionHeader: {

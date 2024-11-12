@@ -33,7 +33,7 @@ interface WorkoutContextProps {
   currentExerciseIndex: number
   intervalDuration: number | null
   startWorkout: (props: { workoutId: string; exercises: Exercise[] }) => void
-  completeExercise: () => void
+  completeExercise: () => Promise<void>
   returnToPreviousExercise: () => void
   finishInterval: () => void
   finishWorkout: () => void

@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     marginTop: 16,
     paddingTop: 16,
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     borderColor: themes.COLORS.GRAY_2,
     gap: 16,
   },

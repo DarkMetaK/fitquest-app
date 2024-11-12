@@ -27,6 +27,7 @@ export function ActiveExercise({
 }: ActiveExerciseProps) {
   const [isPlaying, setIsPlaying] = useState(true)
   const [remainingTime, setRemainingTime] = useState(duration)
+  const [loading, setLoading] = useState(false)
   const timer = useRef<NodeJS.Timeout>()
 
   const {
@@ -86,9 +87,14 @@ export function ActiveExercise({
     }
   }
 
-  function handleSkip() {
+  async function handleSkip() {
+    setLoading(true)
+
     clearInterval(timer.current)
-    completeExercise()
+
+    await completeExercise()
+
+    setLoading(false)
   }
 
   function handleBackPress() {
@@ -148,7 +154,7 @@ export function ActiveExercise({
           <TouchableOpacity
             style={styles.controlButton}
             onPress={handleBackPress}
-            disabled={!hasPreviousExercise}
+            disabled={!hasPreviousExercise || loading}
           >
             <Material
               name="skip-previous"
@@ -163,6 +169,7 @@ export function ActiveExercise({
             <TouchableOpacity
               style={styles.controlButton}
               onPress={handlePlayPause}
+              disabled={loading}
             >
               <Material
                 name={isPlaying ? 'pause' : 'play-arrow'}
@@ -175,7 +182,7 @@ export function ActiveExercise({
           <TouchableOpacity
             style={styles.controlButton}
             onPress={handleSkip}
-            disabled={!hasNextExercise}
+            disabled={!hasNextExercise || loading}
           >
             <Material
               name={repetitions ? 'check' : 'skip-next'}
