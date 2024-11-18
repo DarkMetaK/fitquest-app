@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Text, TouchableOpacity, View } from 'react-native'
@@ -12,6 +13,7 @@ import { styles } from './styles'
 
 export function Header() {
   const insets = useSafeAreaInsets()
+  const navigation = useNavigation()
 
   const {
     data: customerData,
@@ -26,6 +28,10 @@ export function Header() {
   const isPremium =
     customerData?.customer.premiumExpiresAt &&
     dayjs().isBefore(dayjs(customerData?.customer.premiumExpiresAt))
+
+  function handleNavigatePremium() {
+    navigation.navigate('stack', { screen: 'premium' })
+  }
 
   return (
     <View style={[styles.container, { paddingTop: 16 + insets.top }]}>
@@ -49,7 +55,7 @@ export function Header() {
       ) : (
         !error &&
         !isPremium && (
-          <TouchableOpacity style={styles.item}>
+          <TouchableOpacity style={styles.item} onPress={handleNavigatePremium}>
             <Crown color={themes.COLORS.YELLOW_6} />
             <Text style={styles.premium}>Premium</Text>
           </TouchableOpacity>

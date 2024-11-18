@@ -11,6 +11,7 @@ import { FinishedWorkout } from '@/screens/FinishedWorkout'
 import { Home } from '@/screens/Home'
 import { Market } from '@/screens/Market'
 import { Metrics } from '@/screens/Metrics'
+import { Premium } from '@/screens/Premium'
 import { Raffle } from '@/screens/Raffle'
 import { Receipt } from '@/screens/Receipt'
 import { Workout } from '@/screens/Workout'
@@ -40,6 +41,7 @@ type NoTabRoutes = {
   receipt: {
     id: string
   }
+  premium: undefined
 }
 
 export type AppRoutes = {
@@ -143,6 +145,7 @@ function NoTabRoutes() {
       />
       <NoTabNavigation.Screen name="raffle" component={Raffle} />
       <NoTabNavigation.Screen name="receipt" component={Receipt} />
+      <NoTabNavigation.Screen name="premium" component={Premium} />
     </NoTabNavigation.Navigator>
   )
 }

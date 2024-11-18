@@ -59,7 +59,7 @@ export function Home() {
             <TouchableOpacity
               style={styles.seeAllContainer}
               onPress={() =>
-                navigation.navigate('stack', { screen: 'allBundles' })
+                navigation.navigate('stack', { screen: 'premium' })
               }
             >
               <Text style={styles.seeAll}>Ver todos</Text>
