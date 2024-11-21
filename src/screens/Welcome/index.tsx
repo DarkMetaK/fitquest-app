@@ -19,7 +19,7 @@ export function Welcome({ navigation }: WelcomeProps) {
         <Image source={logoImage} alt="" />
 
         <Text style={styles.subtitle}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Seu primeiro passo rumo a uma vida mais saudável e ativa!
         </Text>
       </View>
 

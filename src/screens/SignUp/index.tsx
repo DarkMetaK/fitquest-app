@@ -57,6 +57,7 @@ export function SignUp({ navigation }: SignUpProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
+    setFocus,
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
     reValidateMode: 'onChange',
@@ -66,6 +67,7 @@ export function SignUp({ navigation }: SignUpProps) {
       password: '',
       confirmPassword: '',
     },
+    shouldFocusError: false,
   })
 
   const { mutateAsync } = useMutation({
@@ -142,6 +144,9 @@ export function SignUp({ navigation }: SignUpProps) {
                   error={errors.name?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={() => setFocus('email')}
+                  returnKeyType="next"
                 />
               )}
               name="name"
@@ -157,6 +162,9 @@ export function SignUp({ navigation }: SignUpProps) {
                   error={errors.email?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={() => setFocus('password')}
+                  returnKeyType="next"
                 />
               )}
               name="email"
@@ -172,6 +180,9 @@ export function SignUp({ navigation }: SignUpProps) {
                   error={errors.password?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={() => setFocus('confirmPassword')}
+                  returnKeyType="next"
                 />
               )}
               name="password"
@@ -187,6 +198,9 @@ export function SignUp({ navigation }: SignUpProps) {
                   error={errors.confirmPassword?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={handleSubmit(handleSignUp)}
+                  returnKeyType="send"
                 />
               )}
               name="confirmPassword"

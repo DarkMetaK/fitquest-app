@@ -38,6 +38,7 @@ export function SignIn({ navigation }: SignInProps) {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setFocus,
   } = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
     reValidateMode: 'onChange',
@@ -45,6 +46,7 @@ export function SignIn({ navigation }: SignInProps) {
       email: '',
       password: '',
     },
+    shouldFocusError: false,
   })
 
   async function handleSignInForm({ email, password }: SignInForm) {
@@ -113,6 +115,9 @@ export function SignIn({ navigation }: SignInProps) {
                   error={errors.email?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={() => setFocus('password')}
+                  returnKeyType="next"
                 />
               )}
               name="email"
@@ -128,6 +133,9 @@ export function SignIn({ navigation }: SignInProps) {
                   error={errors.password?.message}
                   value={field.value}
                   onChangeText={field.onChange}
+                  ref={field.ref}
+                  onSubmitEditing={handleSubmit(handleSignInForm)}
+                  returnKeyType="send"
                 />
               )}
               name="password"
