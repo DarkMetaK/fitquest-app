@@ -12,11 +12,13 @@ const sizes = {
     paddingVertical: 4,
     paddingHorizontal: 8,
     fontSize: themes.FONT_SIZE.SM,
+    lineHeight: 16,
   },
   medium: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     fontSize: themes.FONT_SIZE.MD,
+    lineHeight: 24,
   },
 }
 
@@ -45,6 +47,7 @@ export const createStyles = ({ variant, size }: ButtonStylesProps) => {
         ? themes.FONT_FAMILY.REGULAR
         : themes.FONT_FAMILY.MEDIUM,
       fontSize: sizes[size].fontSize,
+      lineHeight: sizes[size].lineHeight,
       color: isPrimary
         ? themes.COLORS.WHITE
         : isOAuth

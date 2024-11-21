@@ -12,6 +12,7 @@ import { Home } from '@/screens/Home'
 import { Market } from '@/screens/Market'
 import { Metrics } from '@/screens/Metrics'
 import { Premium } from '@/screens/Premium'
+import { Profile } from '@/screens/Profile'
 import { Raffle } from '@/screens/Raffle'
 import { Receipt } from '@/screens/Receipt'
 import { Workout } from '@/screens/Workout'
@@ -120,7 +121,7 @@ function TabRoutes() {
 
       <TabNavigation.Screen
         name="profile"
-        component={Home}
+        component={Profile}
         options={{
           tabBarIcon: ({ color }) => (
             <Material name="person" size={24} color={color} />
