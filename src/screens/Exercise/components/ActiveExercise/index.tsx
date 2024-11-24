@@ -1,5 +1,6 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { Image } from 'expo-image'
+import * as Linking from 'expo-linking'
 import { useEffect, useRef, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -15,8 +16,8 @@ interface ActiveExerciseProps {
   duration: number
   repetitions?: number | null
   demonstrationUrl: string
-  audioUrl?: string
-  videoUrl?: string
+  audioUrl?: string | null
+  videoUrl?: string | null
 }
 
 export function ActiveExercise({
@@ -24,6 +25,7 @@ export function ActiveExercise({
   duration,
   repetitions,
   demonstrationUrl,
+  videoUrl,
 }: ActiveExerciseProps) {
   const [isPlaying, setIsPlaying] = useState(true)
   const [remainingTime, setRemainingTime] = useState(duration)
@@ -128,9 +130,18 @@ export function ActiveExercise({
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.demonstrationButton}>
-              <Material name="videocam" size={20} color={themes.COLORS.WHITE} />
-            </TouchableOpacity>
+            {videoUrl && (
+              <TouchableOpacity
+                style={styles.demonstrationButton}
+                onPress={() => Linking.openURL(videoUrl)}
+              >
+                <Material
+                  name="videocam"
+                  size={20}
+                  color={themes.COLORS.WHITE}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 

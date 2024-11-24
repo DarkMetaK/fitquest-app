@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
 
   demonstration: {
     width: '100%',
-    height: 220,
+    height: 320,
     borderRadius: 8,
   },
 

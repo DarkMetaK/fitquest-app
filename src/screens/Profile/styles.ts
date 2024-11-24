@@ -30,6 +30,12 @@ export const styles = StyleSheet.create({
     color: themes.COLORS.GRAY_9,
   },
 
+  premium: {
+    fontFamily: themes.FONT_FAMILY.BOLD,
+    fontSize: themes.FONT_SIZE.MD,
+    color: themes.COLORS.GREEN_6,
+  },
+
   optionsContainer: {
     borderTopWidth: 2,
     borderTopColor: themes.COLORS.GRAY_2,

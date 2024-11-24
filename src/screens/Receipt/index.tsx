@@ -56,15 +56,6 @@ export function Receipt() {
         <View style={[styles.banner, styles.overlay]} />
 
         <View style={styles.codeContainer}>
-          {/* <Image
-            source={{
-              uri: 'https://t1.gstatic.com/licensed-image?q=tbn:ANd9GcTFRaX872E1iX4jlcXwLY01J-fRIap_Bnveev0X5UgEGtUHrSALgmbenlDAx3cryQFr',
-            }}
-            style={styles.qrCode}
-            alt=""
-            resizeMode="cover"
-          /> */}
-
           <View style={styles.qrCode}>
             <QRCode value={ticket?.ticket.id} size={220} />
           </View>
@@ -82,6 +73,30 @@ export function Receipt() {
               <Text style={styles.price}>- {ticket?.ticket.price}</Text>
               <Crystal size={20} color={themes.COLORS.RED_3} />
             </View>
+          </View>
+
+          <View>
+            <Text style={styles.description}>Resultado: </Text>
+
+            {ticket?.ticket.hasWon === null ? (
+              <Text style={styles.result}>Aguardando sorteio.</Text>
+            ) : ticket?.ticket.hasWon ? (
+              <Text style={styles.description}>
+                <Text style={styles.result}>
+                  Parabéns, você ganhou! 🎉{'\n'}
+                </Text>
+                Nossa equipe entrará em contato com você em até 3 dias úteis,
+                caso tenha dúvidas favor enviar email para:
+                suporte-fitquest@gmail.com
+              </Text>
+            ) : (
+              <Text style={styles.description}>
+                <Text style={[styles.result, { color: themes.COLORS.RED_3 }]}>
+                  Infelizmente não foi dessa vez!{'\n'}
+                </Text>
+                Continue tentando a sorte nos próximos sorteios.
+              </Text>
+            )}
           </View>
         </View>
       </ScrollView>

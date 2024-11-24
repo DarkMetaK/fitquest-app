@@ -86,6 +86,17 @@ export function Workout() {
     navigation.goBack()
   }
 
+  if (params.isFinished) {
+    Dialog.show({
+      type: ALERT_TYPE.INFO,
+      title: 'Treino já finalizado',
+      showIndicator: false,
+      textBody:
+        'Você já finalizou este treino, não será possível obter mais cristais ao finalizá-lo novamente.',
+      button: 'Fechar',
+    })
+  }
+
   return (
     <View style={styles.container}>
       <ImageBackground

@@ -71,6 +71,7 @@ export function Exercise() {
             duration={currentExercise.duration}
             repetitions={currentExercise.repetitions}
             demonstrationUrl={currentExercise.demonstrationUrl}
+            videoUrl={currentExercise.videoUrl}
           />
         )
       )}

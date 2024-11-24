@@ -181,6 +181,8 @@ export function Raffle() {
     customer?.customer.premiumExpiresAt &&
     dayjs().isBefore(dayjs(customer?.customer.premiumExpiresAt))
 
+  console.log(userIsPremium)
+
   const allowedToPurchase = !raffle?.raffle.isPremium || userIsPremium
 
   const disableButton =
@@ -282,7 +284,7 @@ export function Raffle() {
               )}
             </View>
 
-            {(!raffle?.raffle.isPremium || userIsPremium) && (
+            {!userIsPremium && !raffle?.raffle.isPremium && (
               <TouchableOpacity
                 style={styles.row}
                 onPress={handleShowQuotaInfo}

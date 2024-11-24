@@ -1,9 +1,11 @@
 import MaterialCommunity from '@expo/vector-icons/MaterialCommunityIcons'
 import { useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 
 import { getCurrentCustomer } from '@/api/get-current-customer'
+import { getCustomerDetails } from '@/api/get-customer-details'
 import { Button } from '@/components/Button'
 import { Header } from '@/components/Header'
 import { Skeleton } from '@/components/Skeleton'
@@ -21,6 +23,12 @@ export function Profile() {
     staleTime: Infinity,
   })
 
+  const { data: metadata } = useQuery({
+    queryKey: ['metadata'],
+    queryFn: getCustomerDetails,
+    staleTime: Infinity,
+  })
+
   function handleConfirmLogout() {
     Dialog.show({
       type: ALERT_TYPE.DANGER,
@@ -32,6 +40,10 @@ export function Profile() {
       onPressButton: () => handleSignOut(),
     })
   }
+
+  const isPremium =
+    metadata?.customer.premiumExpiresAt &&
+    dayjs().isBefore(dayjs(metadata?.customer.premiumExpiresAt))
 
   return (
     <>
@@ -48,6 +60,12 @@ export function Profile() {
             <Text style={styles.name}>{data?.customer.name}</Text>
           )}
           <Text style={styles.text}>Membro desde: 12/08/2024</Text>
+          {isPremium && (
+            <Text style={styles.premium}>
+              Premium até:{' '}
+              {dayjs(metadata.customer.premiumExpiresAt).format('DD/MM/YYYY')}
+            </Text>
+          )}
 
           <Button
             title="Editar"
