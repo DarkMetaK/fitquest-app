@@ -13,6 +13,7 @@ interface WorkoutItemProps {
   availableCurrency: number
   exercisesAmount: number
   isFinished?: boolean
+  description?: string
 }
 
 export function WorkoutItem({
@@ -21,6 +22,7 @@ export function WorkoutItem({
   availableCurrency,
   exercisesAmount,
   isFinished = false,
+  description,
 }: WorkoutItemProps) {
   const navigation = useNavigation()
 
@@ -30,7 +32,7 @@ export function WorkoutItem({
       onPress={() =>
         navigation.navigate('stack', {
           screen: 'workout',
-          params: { id, isFinished },
+          params: { id, isFinished, description },
         })
       }
     >

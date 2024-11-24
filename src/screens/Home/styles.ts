@@ -64,7 +64,6 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: themes.COLORS.GRAY_2,
     justifyContent: 'center',
-    alignItems: 'center',
     gap: 12,
 
     backgroundColor: themes.COLORS.WHITE,
@@ -74,7 +73,6 @@ export const styles = StyleSheet.create({
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.SM,
     color: themes.COLORS.GRAY_12,
-    textAlign: 'center',
   },
 
   error: {

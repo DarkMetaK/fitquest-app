@@ -60,7 +60,10 @@ export function Bundle() {
           { paddingTop: insets.top + 16, height: 160 + insets.top },
         ]}
         source={{
-          uri: 'https://alexandrebento.com.br/wp-content/uploads/2023/03/pilates.jpg',
+          uri: data.activeBundle.bannerUrl.replace(
+            'http://localhost:3333',
+            String(process.env.EXPO_PUBLIC_API_URL),
+          ),
         }}
         resizeMode="cover"
         alt=""
@@ -101,6 +104,7 @@ export function Bundle() {
                   availableCurrency={workout.availableCurrency}
                   exercisesAmount={workout.stepsAmount}
                   isFinished={isFinished}
+                  description={data.activeBundle?.name}
                 />
 
                 {isFinished ? (

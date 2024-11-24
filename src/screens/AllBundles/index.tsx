@@ -144,7 +144,9 @@ export function AllBundles() {
           renderItem={({ item }) => (
             <View style={styles.bundleItem}>
               <View style={styles.bundleHeader}>
-                <Text style={styles.title}>{item.name}</Text>
+                <Text numberOfLines={1} style={styles.title}>
+                  {item.name}
+                </Text>
                 <Text style={styles.contentText}>
                   {item.workouts.length} treinos
                 </Text>

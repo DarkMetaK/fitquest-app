@@ -46,7 +46,10 @@ export function Challenge({
       onPress={() =>
         navigation.navigate('stack', {
           screen: 'workout',
-          params: { id, isFinished },
+          params: {
+            id,
+            isFinished,
+          },
         })
       }
     >

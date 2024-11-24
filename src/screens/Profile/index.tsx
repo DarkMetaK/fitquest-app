@@ -63,7 +63,7 @@ export function Profile() {
             <MaterialCommunity
               name="target"
               size={24}
-              color={themes.COLORS.GRAY_9}
+              color={themes.COLORS.GRAY_12}
             />
             <Text style={styles.optionTxt}>Objetivos</Text>
           </TouchableOpacity>
@@ -72,7 +72,7 @@ export function Profile() {
             <MaterialCommunity
               name="fire"
               size={24}
-              color={themes.COLORS.GRAY_9}
+              color={themes.COLORS.GRAY_12}
             />
             <Text style={styles.optionTxt}>Metas</Text>
           </TouchableOpacity>
@@ -81,7 +81,7 @@ export function Profile() {
             <MaterialCommunity
               name="bell"
               size={24}
-              color={themes.COLORS.GRAY_9}
+              color={themes.COLORS.GRAY_12}
             />
             <Text style={styles.optionTxt}>Notificações</Text>
           </TouchableOpacity>
@@ -90,7 +90,7 @@ export function Profile() {
             <MaterialCommunity
               name="cog"
               size={24}
-              color={themes.COLORS.GRAY_9}
+              color={themes.COLORS.GRAY_12}
             />
             <Text style={styles.optionTxt}>Configurações</Text>
           </TouchableOpacity>
@@ -99,7 +99,7 @@ export function Profile() {
             <MaterialCommunity
               name="exit-to-app"
               size={24}
-              color={themes.COLORS.GRAY_9}
+              color={themes.COLORS.GRAY_12}
             />
             <Text style={styles.optionTxt}>Sair</Text>
           </TouchableOpacity>

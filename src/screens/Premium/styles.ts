@@ -21,12 +21,10 @@ export const styles = StyleSheet.create({
     backgroundColor: themes.COLORS.GRAY_1,
   },
 
-  hero: {
-    paddingVertical: 32,
-    paddingHorizontal: 24,
+  imgContainer: {
+    padding: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 32,
   },
 
   title: {
@@ -44,13 +42,14 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
-    gap: 24,
+    gap: 12,
     backgroundColor: themes.COLORS.WHITE,
   },
 
-  icon: {
+  titleContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 12,
   },
 
   list: {
@@ -68,6 +67,13 @@ export const styles = StyleSheet.create({
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.MD,
     color: themes.COLORS.GRAY_12,
+  },
+
+  priceDetails: {
+    paddingTop: 12,
+    borderTopWidth: 2,
+    borderColor: themes.COLORS.GRAY_2,
+    gap: 16,
   },
 
   priceContainer: {

@@ -1,6 +1,7 @@
 import Material from '@expo/vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import {
   ImageBackground,
   ScrollView,
@@ -30,7 +31,11 @@ export function Workout() {
   const navigation = useNavigation()
   const route = useRoute()
 
-  const params = route.params as { id: string; isFinished?: boolean }
+  const params = route.params as {
+    id: string
+    isFinished?: boolean
+    description?: string
+  }
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['workout', params.id],
@@ -116,7 +121,12 @@ export function Workout() {
       >
         <View>
           <Text style={styles.title}>{data?.workout.name}</Text>
-          <Text style={styles.subtitle}>Treino iniciantes</Text>
+          <Text style={styles.subtitle}>
+            {params.description ||
+              (data?.workout.expiresAt &&
+                `Complete este desafio até:\n${dayjs(data.workout.expiresAt).format('DD/MM/YYYY [às] HH:MM')}`) ||
+              'Aprimore sua saúde e vitalidade com esses exercícios'}
+          </Text>
 
           <View style={styles.infoContainer}>
             <View style={styles.infoItem}>

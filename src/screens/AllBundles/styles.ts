@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     fontFamily: themes.FONT_FAMILY.BOLD,
     fontSize: themes.FONT_SIZE.XL,
     color: themes.COLORS.GRAY_12,
+    flex: 1,
   },
 
   contentContainer: {
@@ -37,6 +38,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 16,
   },
 
   contentText: {

@@ -59,7 +59,7 @@ export function Home() {
             <TouchableOpacity
               style={styles.seeAllContainer}
               onPress={() =>
-                navigation.navigate('stack', { screen: 'premium' })
+                navigation.navigate('stack', { screen: 'allBundles' })
               }
             >
               <Text style={styles.seeAll}>Ver todos</Text>
@@ -88,14 +88,20 @@ export function Home() {
           ) : (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>Nenhum plano ativo</Text>
-              <Button title="Escolher plano" />
+              <Button
+                title="Escolher plano"
+                variant="secondary"
+                onPress={() =>
+                  navigation.navigate('stack', { screen: 'allBundles' })
+                }
+              />
             </View>
           )}
         </View>
 
         <View style={[styles.section, styles.topDivider]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.title}>Desafios Diários</Text>
+            <Text style={styles.title}>Desafios Ativos</Text>
           </View>
 
           {isLoadingChallenges || challengesError ? (
@@ -121,7 +127,7 @@ export function Home() {
                   )}
                   exercisesAmount={item.stepsAmount}
                   availableCurrency={item.availableCurrency}
-                  premiumCurrency={item.availableCurrency * 1.5}
+                  premiumCurrency={item.availableCurrency * 0.5}
                   isFinished={false}
                 />
               )}

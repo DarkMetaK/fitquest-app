@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
   optionTxt: {
     fontFamily: themes.FONT_FAMILY.REGULAR,
     fontSize: themes.FONT_SIZE.LG,
-    color: themes.COLORS.GRAY_9,
+    color: themes.COLORS.GRAY_12,
     lineHeight: 24,
   },
 
