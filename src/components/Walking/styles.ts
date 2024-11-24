@@ -29,6 +29,12 @@ export const styles = StyleSheet.create({
     color: themes.COLORS.GREEN_8,
   },
 
+  text: {
+    fontFamily: themes.FONT_FAMILY.REGULAR,
+    fontSize: themes.FONT_SIZE.XS,
+    color: themes.COLORS.GRAY_12,
+  },
+
   row: {
     flexDirection: 'row',
     alignItems: 'center',
